@@ -1,7 +1,10 @@
-
+import PostList  from '../components/PostList'
 const Home = () => {
   return (
-    <div>Home</div>
+    <div>
+      <h2>Recent Posts</h2>
+      <PostList />
+    </div>
   )
 }
 

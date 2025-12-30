@@ -15,18 +15,20 @@ const createPost = async (post: PostInput, imageFile: File | null) => {
     const filePath = `${post.title}-${Date.now()}-${imageFile?.name}`;
 
     const { error: uploadError } = await supabase.storage
-        .from('post-images')
+        .from('post_images')
         .upload(filePath, imageFile!);
 
     if (uploadError) {
         throw new Error(uploadError.message);
     }
-    const { data, error } = await supabase.from('posts').insert([post]);
+
+    const { data: publicUrlData } =  supabase.storage.from('post_images').getPublicUrl(filePath);
+    const { data, error } = await supabase.from('posts').insert({...post, image_url: publicUrlData.publicUrl});
 
     if (error) {
         throw new Error(error.message);
     }  
-    
+
     return data;    
 
 }
@@ -37,7 +39,7 @@ const CreatePost = () => {
     const [content, setContent] = useState('');
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
-    const { mutate } = useMutation({
+    const { mutate, isPending, isError } = useMutation({
         mutationFn: (data: {post: PostInput, imageFile: File}) => {
             if (!data.imageFile) {
                 throw new Error("No file selected");
@@ -59,35 +61,56 @@ const CreatePost = () => {
     }
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit}  className="max-w-2xl mx-auto space-y-4">
         <div>
-            <label>Title </label>
+            <label 
+                htmlFor='title'
+                className="block mb-2 font-medium">Title </label>
             <input 
                id='title'
                type="text" 
                placeholder="Post Title" 
                onChange={(e) => setTitle(e.target.value)}
-               className="w-full p-2 mb-4 bg-gray-800 border border-gray-700 rounded text-gray-100"/>
+               className="w-full border border-white/10 bg-transparent p-2 rounded"/>
             </div>
         <div>
-            <label>Post Content</label>
+            <label
+                htmlFor='content'
+                className="block mb-2 font-medium"
+                >Post Content</label>
             <textarea 
                onChange={(e) => setContent(e.target.value)}
                id='content'
                placeholder="Post Content" 
-               className="w-full p-2 mb-4 bg-gray-800 border border-gray-700 rounded text-gray-100 h-40"></textarea>
+               className="w-full border border-white/10 bg-transparent p-2 rounded" 
+               rows={5}
+               />
         </div>
         <div>
-            <label>Upload Image</label>
+            <label
+                htmlFor='image'
+                className="block mb-2 font-medium"
+            >Upload Image</label>
             <input
                type='file'
                onChange={handleFileChange}
                id='image'
+               accept='images/*'
                required
+               className="w-full text-gray-200"
              />
         </div>
 
-        <button type="submit" className="bg-blue-500 px-4 py-2 rounded text-white">Create Post</button>
+        <button 
+          type="submit" 
+          className="bg-purple-500 text-white px-4 py-2 rounded cursor-pointer">
+            {
+                isPending ? 'Creating' : 'Create Post'
+            }
+        </button>
+        {
+            isError && <p>Error Creating Post</p>
+        }
     </form>
   )
 }
