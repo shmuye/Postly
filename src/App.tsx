@@ -2,6 +2,7 @@ import { Routes, Route } from 'react-router-dom'
 import Navbar from './components/Navbar.tsx'
 import Home from './pages/Home.tsx'
 import CreatePostPage from './pages/CreatePostPage.tsx'
+import PostPage from './pages/PostPage.tsx'
 
 
 const App = () => {
@@ -12,6 +13,7 @@ const App = () => {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/create" element={<CreatePostPage />} /> 
+            <Route path="/post/:id" element={<PostPage />} />
            
 
           </Routes>

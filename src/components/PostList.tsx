@@ -8,6 +8,9 @@ export interface Post {
     content: string;
     image_url: string;
     created_at: string;
+    avatar_url?: string;
+    like_count?: number; 
+    comment_count?: number;
 }
 
 
