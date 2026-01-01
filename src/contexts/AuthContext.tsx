@@ -2,7 +2,6 @@ import { createContext , useContext, useEffect } from "react";
 import { supabase } from "../supabase-client";
 import type { User } from "@supabase/supabase-js";
 import { useState } from "react";
-import type { props } from "../components/LikeButton";
 
 interface AuthContextType {
 
@@ -57,13 +56,4 @@ export const useAuth = (): AuthContextType => {
     throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
-};
-export const LikeButton = ({ postId }: props) => {
-    return (
-        <div>
-            {" "}
-            <button></button>
-
-        </div>
-    );
 };

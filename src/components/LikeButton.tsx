@@ -26,13 +26,13 @@ const LikeButton = ({ postId }: props) => {
 
     const { user } = useAuth();
     
-    const userId = user?.user_metadata.user_id; 
+     
 
    
     const { mutate } = useMutation({
         mutationFn: (voteValue: number ) => {
             if(!user) throw new Error("User doesn't exist");
-            return vote(voteValue, postId, userId) 
+            return vote(voteValue, postId, user?.id) 
 
         } 
     })
@@ -41,14 +41,16 @@ const LikeButton = ({ postId }: props) => {
     <div>
         {" "}
         <button
+           className='cursor-pointer mr-4'
            onClick={() => mutate(1)}
         >
             <ThumbsUp />
         </button>
         <button
+          className='cursor-pointer'
           onClick={() => mutate(-1)}
         >
-            <ThumbsDown />
+            <ThumbsDown  />
         </button>
 
     </div>
