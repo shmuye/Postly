@@ -41,7 +41,7 @@ const PostList = () => {
     
     console.log(data);
   return (
-    <div>
+    <div className="flex justify-center gap-4">
         {
             data && data.map(post => (
                 <PostItem key={post.id} post={post} />

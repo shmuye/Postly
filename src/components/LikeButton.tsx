@@ -1,41 +1,113 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { supabase } from '../supabase-client';
 import { ThumbsDown, ThumbsUp } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
+import { useQueryClient } from '@tanstack/react-query';
 
 
 interface props {
     postId : number;
 }
+ 
+interface Vote {
 
-const vote = async (voteValue: number, postId: number, userId: number) => {
-   const { error } = await supabase.from('votes').insert({
-    post_id: postId,
-    user_id: userId,
-    vote: voteValue
+     id: number,
+     post_id: number,
+     user_id: string,
+     vote: number
+
+}
+
+const vote = async (voteValue: number, postId: number, userId: string) => {
+
+  const { data: existingVote } = await supabase
+     .from('votes')
+     .select("*")
+     .eq("post_id", postId)
+     .eq('user_id', userId)
+     .maybeSingle()
+
+   if(existingVote) {
+    if(existingVote.vote === voteValue){
+        const { error } = await supabase
+                   .from('votes')
+                   .delete()
+                   .eq('id', existingVote.id)
+        if(error){
+            throw new Error(error.message)
+        }
+
+    }else {
+         const { error } = await supabase
+                .from('votes')
+                .update({ vote : voteValue})
+                .eq('id', existingVote.id)
+
+        if(error) throw new Error(error.message)
+    }
+   }else {
+
+    const { error } = await supabase.from('votes').insert({
+          post_id: postId,
+          user_id: userId,
+          vote: voteValue
    })
 
    if(error) {
-    throw new Error(error.message);
+      throw new Error(error.message);
+   }
+
    }
 }
 
+const fetchPosts =  async (postId: number): Promise<Vote[]> => {
+    const {data , error } = await supabase
+        .from('votes')
+        .select("*")
+        .eq('post_id', postId)
         
+
+    if(error) throw new Error(error.message)
+    
+    return data as Vote[]
+}
+
+
 
 const LikeButton = ({ postId }: props) => {
 
     const { user } = useAuth();
-    
-     
+    const queryClient = useQueryClient()
 
-   
+    const { data: votes, isLoading, error  } = useQuery<Vote[], Error>({
+         queryKey: ['votes', postId],
+         queryFn: () => fetchPosts(postId)
+    })
+    
     const { mutate } = useMutation({
         mutationFn: (voteValue: number ) => {
             if(!user) throw new Error("User doesn't exist");
             return vote(voteValue, postId, user?.id) 
 
-        } 
+        } ,
+        onSuccess: () => {
+            queryClient.invalidateQueries({
+                queryKey: ['votes', postId]
+            })
+        }
+
     })
+
+    if(isLoading) {
+        return <div>Loading Votes</div>
+    }
+    if(error) {
+        return <div>Error: {error.message }</div>
+    }
+
+  const likes = votes?.filter((v) => v.vote === 1).length || 0
+  const dislikes = votes?.filter((v) => v.vote === -1).length || 0
+
            
   return (
     <div>
@@ -44,13 +116,13 @@ const LikeButton = ({ postId }: props) => {
            className='cursor-pointer mr-4'
            onClick={() => mutate(1)}
         >
-            <ThumbsUp />
+            <ThumbsUp /> { likes }
         </button>
         <button
           className='cursor-pointer'
           onClick={() => mutate(-1)}
         >
-            <ThumbsDown  />
+            <ThumbsDown  /> { dislikes}
         </button>
 
     </div>
