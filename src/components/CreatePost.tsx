@@ -64,6 +64,8 @@ const CreatePost = () => {
         }
     }
 
+    
+
   return (
     <form onSubmit={handleSubmit}  className="max-w-2xl mx-auto space-y-4">
         <div>

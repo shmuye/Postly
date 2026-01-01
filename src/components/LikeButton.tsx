@@ -5,6 +5,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { useQueryClient } from '@tanstack/react-query';
 
 
+
 interface props {
     postId : number;
 }
@@ -107,6 +108,7 @@ const LikeButton = ({ postId }: props) => {
 
   const likes = votes?.filter((v) => v.vote === 1).length || 0
   const dislikes = votes?.filter((v) => v.vote === -1).length || 0
+  const userVote = votes?.find((v) => v.user_id === user?.id)?.vote
 
            
   return (
