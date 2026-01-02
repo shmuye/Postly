@@ -33,6 +33,8 @@ const addComment =  async (
   if(error) {
     throw new Error(error.message)
   }
+
+  return true;
 }
 const CommentSection = ({ postId } : props) => {
   const { user } = useAuth()
@@ -42,7 +44,7 @@ const CommentSection = ({ postId } : props) => {
 
   const { mutate, isPending, error } = useMutation({
     mutationFn: (comment: Comment) => {
-        addComment(comment, postId,  user!.id, userName)
+        return addComment(comment, postId,  user!.id, userName)
     },
   })
 
