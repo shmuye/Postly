@@ -17,15 +17,22 @@ const addComment =  async (
   postId: number,
   userId: string, 
   author: string ) => {
-  const {} = await supabase
+    if(!userId || !author) { 
+      throw new Error("You must be logged in to comment")
+    }
+  const { error } = await supabase
                     .from('comment')
                     .insert({
-                        parent_comment_id,
-                        content,
-                        user_id: userId,
                         post_id: postId,
+                        parent_comment_id: comment.parent_comment_id ?? null,
+                        content: comment.content,
+                        user_id: userId,
+                        author: author
 
                     })
+  if(error) {
+    throw new Error(error.message)
+  }
 }
 const CommentSection = ({ postId } : props) => {
   const { user } = useAuth()
@@ -33,19 +40,30 @@ const CommentSection = ({ postId } : props) => {
   const queryClient = useQueryClient()
   const userName = user?.user_metadata?.user_name
 
-  const { mutate } = useMutation({
-    mutationFn: (newComment: Comment) => {
-        addComment(newComment, postId, user?.id, userName)
+  const { mutate, isPending, error } = useMutation({
+    mutationFn: (comment: Comment) => {
+        addComment(comment, postId,  user!.id, userName)
     },
-    onSuccess: () => {
-
-    }
-    
   })
+
   const handleSubmit = (e: React.FormEvent) => {
          e.preventDefault()
          if(!newComment) return 
-         mutate
+
+         mutate({
+          content: newComment,
+          parent_comment_id: null,
+         })
+
+         setNewComment("")
+  }
+
+  if(isPending) {
+    return <div>Loading comment</div>
+  }
+
+  if(error) {
+    return <div>{error.message} </div>
   }
   return (
     <div>
@@ -58,8 +76,20 @@ const CommentSection = ({ postId } : props) => {
                           placeholder="write a comment" 
                           onChange={(e) => setNewComment(e.target.value)}
                         />
-                      <button type="submit" >Post Comment</button>
-                   </form> 
+                      <button type="submit" >
+                        {
+                          isPending ? "Posting" : "Post Comment"
+                        }
+
+                      </button>
+
+                       {
+                         error && <p>Error posting a comment</p>
+                      }
+                    
+                    </form> 
+
+                  
             )
             : <p>You must login to post a comment</p>
         }
