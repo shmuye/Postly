@@ -50,7 +50,7 @@ const PostDetail = ({ postId }: props) => {
         Posted on: {new Date(data!.created_at).toLocaleDateString()}
       </p>
       <LikeButton postId={postId} />
-      <CommentSection />
+      <CommentSection postId={postId} />
     </div>
   )
 }

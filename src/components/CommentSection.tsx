@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { useAuth } from "../contexts/AuthContext"
-import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { useMutation } from "@tanstack/react-query"
 
 import { supabase } from "../supabase-client"
 
@@ -39,7 +39,6 @@ const addComment =  async (
 const CommentSection = ({ postId } : props) => {
   const { user } = useAuth()
   const [newComment, setNewComment] = useState<string>("")
-  const queryClient = useQueryClient()
   const userName = user?.user_metadata?.user_name
 
   const { mutate, isPending, error } = useMutation({
@@ -78,7 +77,10 @@ const CommentSection = ({ postId } : props) => {
                           placeholder="write a comment" 
                           onChange={(e) => setNewComment(e.target.value)}
                         />
-                      <button type="submit" >
+                      <button
+                         type="submit" 
+                         className="bg-white rounded-sm p-3 text-black cursor-pointer"
+                         >
                         {
                           isPending ? "Posting" : "Post Comment"
                         }
