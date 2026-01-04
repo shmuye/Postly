@@ -1,8 +1,10 @@
 import { useState } from "react"
 import { useAuth } from "../contexts/AuthContext"
-import { useMutation, useQuery } from "@tanstack/react-query"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+
 
 import { supabase } from "../supabase-client"
+import CommentItem from "./CommentItem"
 
 interface props {
     postId: number
@@ -53,7 +55,7 @@ const addComment =  async (
                           .select('*')
                           .eq('post_id', postId)
                           .order('created_at', {ascending: true})
-                          .single()
+                          
     if(error) throw new Error(error.message)
 
     return data as Comment[]
@@ -62,16 +64,23 @@ const CommentSection = ({ postId } : props) => {
   const { user } = useAuth()
   const [newComment, setNewComment] = useState<string>("")
   const userName = user?.user_metadata?.user_name
+  const queryClient = useQueryClient()
 
   const {data: comments, isLoading, error } = useQuery({
     queryKey: ['comments', postId],
-    queryFn: fetchComments,
+    queryFn:() => fetchComments(postId),
   })
 
   const { mutate, isPending, isError } = useMutation({
     mutationFn: (comment: NewComment) => {
+        if(!user) throw new Error("not authenticated")
         return addComment(comment, postId,  user!.id, userName)
     },
+    onSuccess: () => {
+        queryClient.invalidateQueries({
+            queryKey: ['comments', postId]
+        })
+    }
   })
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -153,9 +162,15 @@ const buildCommentTree = (
             : <p>You must login to post a comment</p>
         }
 
-         {/* <div>
-          { commentTree }
-        </div>  */}
+          <div>
+        {commentTree.map((comment) => (
+          <CommentItem
+              key={comment.id}
+              comment={comment}
+              postId={postId}
+          />
+        ))}
+      </div>
     </div>
   )
 }
