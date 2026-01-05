@@ -4,6 +4,7 @@ import { useAuth } from "../contexts/AuthContext"
 import { useMutation } from "@tanstack/react-query"
 import { useQueryClient } from "@tanstack/react-query"
 import { supabase } from "../supabase-client"
+import { ChevronDown, ChevronUp } from "lucide-react"
 interface props {
 
   postId: number,
@@ -42,6 +43,7 @@ const createReply =  async (
 const CommentItem = ({postId, comment}: props) => {
   const [showReply, setShowReply] = useState<boolean>(false)
   const [replyText, setReplyText] = useState<string>("")
+  const [isCollapsed, setIsCollapsed] = useState(true)
   const { user } = useAuth()
   const queryClient = useQueryClient()
 
@@ -112,6 +114,24 @@ const CommentItem = ({postId, comment}: props) => {
                       }
                     
                     </form> 
+        )
+      }
+      {
+        comment.children && comment.children.length > 0 &&  (
+          <div>
+            <button
+            onClick={() => setIsCollapsed(prev => !prev)}
+            title={isCollapsed ? "Hide Replies" : "Show Replies"}
+            >{ isCollapsed ? <ChevronDown /> : <ChevronUp />}</button>
+
+            {
+              !isCollapsed && (
+                comment.children.map((child, key) => (
+                  <CommentItem key={key}  comment={child} postId={postId}/>
+                ))
+              )
+            }
+          </div>
         )
       }
     </div>
