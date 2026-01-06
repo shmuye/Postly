@@ -1,4 +1,4 @@
-import { useMutation } from "@tanstack/react-query"
+import { useMutation, useQueryClient, useQueryErrorResetBoundary } from "@tanstack/react-query"
 import { supabase } from "../supabase-client"
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
@@ -24,11 +24,15 @@ const CreateCommunity = () => {
   const [name, setName] = useState<string>("")
   const [description, setDescription] = useState<string>("")
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
 
 
   const {mutate, isPending, isError} = useMutation({
            mutationFn: createCommunity ,
            onSuccess: () => {
+            queryClient.invalidateQueries({
+              queryKey: ['communities']
+            })
            navigate('/communities')
          }
 

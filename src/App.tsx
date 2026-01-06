@@ -18,8 +18,6 @@ const App = () => {
             <Route path="community/create" element={<CreateCommunityPage />} /> 
             <Route path="/post/:id" element={<PostPage />} />
             <Route path="/communities" element={<CommunitiesPage />} />
-           
-
           </Routes>
       </div>
     </div>
