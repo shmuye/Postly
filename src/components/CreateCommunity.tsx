@@ -36,7 +36,7 @@ const CreateCommunity = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
          e.preventDefault()
-         mutate(name, description )
+         mutate({ name, description } )
   }    
   return (
     <form onSubmit={handleSubmit}>
