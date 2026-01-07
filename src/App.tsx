@@ -5,6 +5,7 @@ import CreatePostPage from './pages/CreatePostPage.tsx'
 import CreateCommunityPage from './pages/CreateCommunityPage.tsx'
 import PostPage from './pages/PostPage.tsx'
 import CommunitiesPage from './pages/CommunitiesPage.tsx'
+import CommunityPage from './pages/CommunityPage.tsx'
 
 
 const App = () => {
@@ -18,6 +19,7 @@ const App = () => {
             <Route path="community/create" element={<CreateCommunityPage />} /> 
             <Route path="/post/:id" element={<PostPage />} />
             <Route path="/communities" element={<CommunitiesPage />} />
+            <Route path="/community/:id" element={<CommunityPage />}/>
           </Routes>
       </div>
     </div>
