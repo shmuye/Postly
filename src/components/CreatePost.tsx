@@ -1,15 +1,16 @@
 import React, { type ChangeEvent } from 'react'
 import { useState } from 'react';
 import { supabase } from '../supabase-client';
-import  { useMutation } from '@tanstack/react-query';
+import  { useMutation, useQuery } from '@tanstack/react-query';
 import { useAuth } from '../contexts/AuthContext';
+import { fetchCommunities, type Community } from './CommunityList';
 
 
 interface PostInput {
-
     title : string;
     content: string ;
     avatar_url: string | null;
+    community_id?: number | null;
 }
 
 const createPost = async (post: PostInput, imageFile: File | null) => {
@@ -40,8 +41,13 @@ const CreatePost = () => {
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
+    const [communityId, setCommunityId] = useState<number | null>(null);
 
     const { user } = useAuth();
+    const { data: communities} = useQuery<Community[], Error>({
+        queryFn: fetchCommunities ,
+        queryKey: ['communities']
+    })
 
     const { mutate, isPending, isError } = useMutation({
         mutationFn: (data: {post: PostInput, imageFile: File}) => {
@@ -55,7 +61,12 @@ const CreatePost = () => {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if(!selectedFile) return;
-        mutate({post: { title, content , avatar_url: user?.user_metadata.avatar_url || null}, imageFile: selectedFile});
+        mutate({post: { 
+               title, content , 
+               avatar_url: user?.user_metadata.avatar_url || null,
+               community_id: communityId
+            },
+            imageFile: selectedFile});
     }   
 
     const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -63,7 +74,11 @@ const CreatePost = () => {
             setSelectedFile(e.target.files[0]);
         }
     }
-
+  
+    const handleCommunityChange = (e: ChangeEvent<HTMLSelectElement>) => {
+            const value = e.target.value;
+            setCommunityId(value ? Number(value) : null);
+    }
     
 
   return (
@@ -91,6 +106,27 @@ const CreatePost = () => {
                className="w-full border border-white/10 bg-transparent p-2 rounded" 
                rows={5}
                />
+        </div>
+        <div>
+            <label htmlFor="community">Select Community</label>
+            <select 
+               name="" 
+               id="community"
+               onChange={handleCommunityChange}>
+                <option value={""}>
+                   ---Choose Community---
+                </option>
+                {
+                    communities?.map((community, key) => (
+                        <option 
+                        key={key}
+                        value={community.id}>
+                            {community.name}
+                        </option>
+                    ))
+                 }
+
+            </select>
         </div>
         <div>
             <label
