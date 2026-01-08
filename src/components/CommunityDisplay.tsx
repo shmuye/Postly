@@ -9,7 +9,7 @@ interface props {
 }
 
 interface PostWithCommunity extends Post {
-         communities: {
+         community: {
             name: string
          }
 }
@@ -41,9 +41,9 @@ const CommunityDisplay = ({ communityId }: props) => {
       return <div>Error fetching Community: {error.message}</div>
     }
   return (
-    <div className="pt-20">
+    <div>
       <h2>
-        { data &&  data[0].communities.name } Community Posts  
+        { data &&  data[0]?.community?.name } Community Posts  
         
       </h2>
     </div>
