@@ -29,11 +29,11 @@ const PostList = () => {
     });
 
     if (isLoading) {
-        return <div>Loading posts...</div>;
+        return <div className="text-center">Loading posts...</div>;
     }
 
     if (isError) {
-        return <div>Error loading posts.</div>;
+        return <div className="text-center">Error loading posts.</div>;
     }     
     
     console.log(data);
