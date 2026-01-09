@@ -31,7 +31,7 @@ const CommunityList = () => {
         {
             data?.map((community, key) => {
                 return <div key={key}>
-                     <Link to="community">
+                     <Link to={`/community/${community.id}}`}>
                          {
                             community.name
                          }
