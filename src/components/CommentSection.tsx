@@ -131,19 +131,24 @@ const buildCommentTree = (
 
   const commentTree = comments ? buildCommentTree(comments) : []
   return (
-    <div>
+    <div className="mt-6">
+       <h3 className="text-2xl font-semibold mb-4">Comments</h3>
         {
             user ? (
-                   <form onSubmit={handleSubmit}>
+                   <form 
+                      onSubmit={handleSubmit}
+                      className="mb-4"
+                      >
                       <textarea 
                           value={newComment}
                           rows={3} 
                           placeholder="write a comment" 
+                          className="w-full border border-white/10 bg-transparent p-2 rounded"
                           onChange={(e) => setNewComment(e.target.value)}
                         />
                       <button
                          type="submit" 
-                         className="bg-white rounded-sm p-3 text-black cursor-pointer"
+                         className="mt-2 bg-blue-500 text-white px-4 py-2 rounded cursor-pointer"
                          >
                         {
                           isPending ? "Posting..." : "Post Comment"
@@ -152,17 +157,20 @@ const buildCommentTree = (
                       </button>
 
                        {
-                         isError && <p>Error posting a comment</p>
+                         isError && <p className="text-red-500 mt-2">Error posting a comment</p>
                       }
                     
                     </form> 
 
                   
             )
-            : <p>You must login to post a comment</p>
+            : <p 
+             className="mb-4 text-gray-600"
+            >You must login to post a comment</p>
         }
 
-          <div>
+        <div  
+           className="space-y-4">
         {commentTree.map((comment) => (
           <CommentItem
               key={comment.id}

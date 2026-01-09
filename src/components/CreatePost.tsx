@@ -92,7 +92,7 @@ const CreatePost = () => {
                type="text" 
                placeholder="Post Title" 
                onChange={(e) => setTitle(e.target.value)}
-               className="w-full border border-white/10 bg-transparent p-2 rounded"/>
+               className="w-full border border-white/20 bg-transparent p-2 rounded"/>
             </div>
         <div>
             <label
@@ -103,7 +103,7 @@ const CreatePost = () => {
                onChange={(e) => setContent(e.target.value)}
                id='content'
                placeholder="Post Content" 
-               className="w-full border border-white/10 bg-transparent p-2 rounded" 
+               className="w-full border border-white/20 bg-transparent p-2 rounded" 
                rows={5}
                />
         </div>
@@ -117,9 +117,9 @@ const CreatePost = () => {
                    ---Choose Community---
                 </option>
                 {
-                    communities?.map((community, key) => (
+                    communities?.map((community) => (
                         <option 
-                        key={key}
+                        key={community.id}
                         value={community.id}>
                             {community.name}
                         </option>
@@ -145,7 +145,7 @@ const CreatePost = () => {
 
         <button 
           type="submit" 
-          className="bg-purple-500 text-white px-4 py-2 rounded cursor-pointer">
+          className="bg-blue-500 text-white px-4 py-2 rounded cursor-pointer">
             {
                 isPending ? 'Creating' : 'Create Post'
             }

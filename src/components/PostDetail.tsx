@@ -28,10 +28,10 @@ const PostDetail = ({ postId }: props) => {
     });
 
     if (isLoading) {
-        return <div>Loading post detail...</div>;
+        return <div className="text-center py-4">Loading post detail...</div>;
     }
     if (isError) {
-        return <div>Error loading post detail.</div>;
+        return <div className="text-center text-red-500 py-4">Error loading post detail.</div>;
     }
   return (
      <div className="space-y-6">

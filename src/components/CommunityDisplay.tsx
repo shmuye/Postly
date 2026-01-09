@@ -28,36 +28,52 @@ const fetchCommunityPosts =  async (communityId: number): Promise<PostWithCommun
 
 const CommunityDisplay = ({ communityId }: props) => {
 
+  const isValidId = Number.isInteger(communityId);
+
   const {data, isLoading, error } = useQuery<PostWithCommunity[], Error>({
     queryKey: ['communityPost', communityId],
     queryFn: () => fetchCommunityPosts(communityId ?? null),
-    enabled: communityId != null
+    enabled: isValidId
   });
+
+  if (!isValidId) {
+    return (
+      <div className="text-center py-4 text-red-500">
+        Invalid community ID
+      </div>
+    );
+  }
   
   if(isLoading) {
-      return <div>Loading Community...</div>
+      return <div className="text-center py-4 ">Loading Community...</div>
   }
 
     if(error) {
-      return <div>Error fetching Community: {error.message}</div>
+      return <div className="text-center py-4 text-red-500">Error fetching Community: {error.message}</div>
     }
   return (
     <div>
-      <h2>
+      <h2
+         className="text-5xl font-bold mb-6 text-center bg-gradient-to-r from-green-500 to-blue-500 bg-clip-text text-transparent"
+      >
         { data &&  data[0]?.community?.name } Community Posts  
       </h2>
 
       {
         data && data.length > 0 ? (
-          <div>
+          <div
+            className="flex flex-wrap gap-6 justify-center"
+          >
             {
-              data.map((post, key) => (
-               <PostItem key={key} post={post} />
+              data.map((post) => (
+               <PostItem key={post.id} post={post} />
               ))
             }
           </div>
         ) :
-         (<p>No posts in this community yet</p>)
+         (<p
+           className="text-center text-gray-400"
+         >No posts in this community yet</p>)
       }
       
     </div>

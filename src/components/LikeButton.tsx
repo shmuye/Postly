@@ -112,17 +112,17 @@ const LikeButton = ({ postId }: props) => {
 
            
   return (
-    <div>
+    <div className="flex items-center space-x-4 my-4">
         {" "}
         <button
-           className='cursor-pointer mr-4'
+           className='cursor-pointer'
            onClick={() => mutate(1)}
         >
             <ThumbsUp /> { likes }
         </button>
         <button
-          className='cursor-pointer'
-          onClick={() => mutate(-1)}
+           className='cursor-pointer'
+           onClick={() => mutate(-1)}
         >
             <ThumbsDown  /> { dislikes}
         </button>

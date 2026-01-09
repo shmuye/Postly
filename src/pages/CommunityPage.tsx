@@ -6,9 +6,8 @@ const CommunityPage = () => {
     const { id } =  useParams<{id: string}>()
     
     return (
-    <div>
-        <h2>Community Posts</h2>
-        <CommunityDisplay communityId={Number(id)} />
+      <div className="pt-20">
+      <CommunityDisplay communityId={Number(id)} />
     </div>
   )
 }

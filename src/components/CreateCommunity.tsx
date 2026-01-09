@@ -43,29 +43,46 @@ const CreateCommunity = () => {
          mutate({ name, description } )
   }    
   return (
-    <form onSubmit={handleSubmit}>
-      <h2>Create New Community</h2>
+    <form 
+       onSubmit={handleSubmit}
+       className="mx-auto max-w-2xl space-y-4"
+       >
+      <h2
+         className="text-5xl font-bold text-center mb-6 bg-gradient-to-r from-green-500 to-blue-500 bg-clip-text text-transparent whitespace-nowrap"
+      >
+         Create New Community
+      </h2>
 
       <div>
-        <label>Community Name</label>
+        <label
+         className="block mb-2 font-medium"
+        >Community Name</label>
         <input 
             type="text"  
             id="name" 
             required
+            className="w-full border border-white/20 bg-transparent p-2 rounded"
             onChange={(e) => setName(e.target.value)} 
           />
       </div>
 
        <div>
-        <label>Description</label>
+        <label
+         className="block mb-2 font-medium"
+        >Description</label>
         <textarea 
              id="description" 
-             required rows={3}
+             required 
+             rows={3}
+             className="w-full border border-white/20 bg-transparent p-2 rounded"
              onChange={(e) => setDescription(e.target.value)} 
           />
       </div>
 
-      <button>{isPending ? "Creating" : "Create Community"}</button>
+      <button
+       type="submit"
+      className="bg-blue-500 text-white px-4 py-2 rounded cursor-pointer"
+      >{isPending ? "Creating" : "Create Community"}</button>
       {
         isError && <div>Error Creating Community</div>
       }

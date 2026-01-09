@@ -24,20 +24,30 @@ const CommunityList = () => {
         queryKey: ['communities']
     })
 
-    if(isLoading) return <div>Loading Communities...</div>
-    if(error) return <div>{error.message}</div>
+    if(isLoading) return <div className="text-center py-4">Loading Communities...</div>
+    if(error) return <div className="text-center text-red-500 py-4">Error: {error.message}</div>
   return (
-    <div>
+    <div
+       className="max-w-5xl mx-auto space-y-4"
+    >
         {
-            data?.map((community, key) => {
-                return <div key={key}>
-                     <Link to={`/community/${community.id}}`}>
+            data?.map((community) => {
+                return <div 
+                          key={community.id}
+                          className="border border-white/20 p-4 rounded hover:-translate-y-1 transition transform"
+                          >
+                     <Link 
+                        to={`/community/${community.id}}`}
+                        className="text-2xl font-bold text-blue-500 hover:underline"
+                        >
                          {
                             community.name
                          }
                      </Link>
                      {
-                        <p>{community.description}</p>
+                        <p
+                          className="text-gray-400 mt-2"
+                        >{community.description}</p>
                      }
                 </div>
             })

@@ -74,14 +74,27 @@ const CommentItem = ({postId, comment}: props) => {
 
  
   return (
-    <div>
-      <div>
-        <div>
-          <span>{comment.author}</span>
-          <span>{new Date(comment.created_at).toLocaleString()}</span>
+    <div
+      className="pl-4 border-l border-white/10"
+    >
+      <div
+       className="mb-2"
+      >
+        <div
+          className="flex items-center space-x-2"
+        >
+          <span
+            className="text-sm font-bold text-blue-400"
+          >{comment.author}</span>
+          <span
+           className="text-xs text-gray-500"
+          >{new Date(comment.created_at).toLocaleString()}</span>
         </div>
-        <p>{comment.content}</p>
+        <p
+          className="text-gray-300"
+        >{comment.content}</p>
         <button
+          className="text-blue-500 text-sm mt-1"
           onClick={() =>  setShowReply(prev => !prev)} 
         >
           {
@@ -91,17 +104,21 @@ const CommentItem = ({postId, comment}: props) => {
       </div>
       {
         showReply && user && (
-          <form onSubmit={handleReplySubmit}>
+          <form 
+              onSubmit={handleReplySubmit}
+              className="mb-2"
+            >
               
               <textarea 
                   value={replyText}
                   rows={3} 
                   placeholder="write a Reply" 
                   onChange={(e) => setReplyText(e.target.value)}
+                  className="w-full border border-white/10 bg-transparent p-2 rounded"
                 />
                       <button
                          type="submit" 
-                         className="bg-white rounded-sm p-3 text-black cursor-pointer"
+                         className="mt-1 bg-blue-500 text-white px-3 py-1 rounded"
                          >
                         {
                           isPending ? "Replying..." : "Post Reply"
@@ -110,7 +127,7 @@ const CommentItem = ({postId, comment}: props) => {
                       </button>
 
                        {
-                         isError && <p>Error posting a Reply</p>
+                         isError && <p className="text-red-500">Error posting a Reply</p>
                       }
                     
                     </form> 
@@ -122,14 +139,20 @@ const CommentItem = ({postId, comment}: props) => {
             <button
             onClick={() => setIsCollapsed(prev => !prev)}
             title={isCollapsed ? "Hide Replies" : "Show Replies"}
-            >{ isCollapsed ? <ChevronDown /> : <ChevronUp />}</button>
+            >{ isCollapsed ? <ChevronUp /> : <ChevronDown />}</button>
 
             {
               !isCollapsed && (
-                comment.children.map((child, key) => (
+                <div
+                 className="space-y-2"
+                >
+                  {
+                   comment.children.map((child, key) => (
                   <CommentItem key={key}  comment={child} postId={postId}/>
                 ))
-              )
+                  }
+                </div>
+                )
             }
           </div>
         )
