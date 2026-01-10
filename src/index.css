@@ -36,3 +36,10 @@
   opacity: 1;
   transform: translateY(0);
 }
+
+@media print {
+  .print-text {
+    color: black !important;
+    background: none !important;
+  }
+}
