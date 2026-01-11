@@ -4,6 +4,7 @@ import { supabase } from '../supabase-client';
 import  { useMutation, useQuery } from '@tanstack/react-query';
 import { useAuth } from '../contexts/AuthContext';
 import { fetchCommunities, type Community } from './CommunityList';
+import { useNavigate } from 'react-router-dom';
 
 
 interface PostInput {
@@ -38,12 +39,16 @@ const createPost = async (post: PostInput, imageFile: File | null) => {
 
 const CreatePost = () => {
 
+
+
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [communityId, setCommunityId] = useState<number | null>(null);
 
     const { user } = useAuth();
+    const navigate = useNavigate()
+
     const { data: communities} = useQuery<Community[], Error>({
         queryFn: fetchCommunities ,
         queryKey: ['communities']
@@ -55,6 +60,10 @@ const CreatePost = () => {
                 throw new Error("No file selected");
             }
             return createPost(data.post, data.imageFile);
+        },
+
+        onSuccess: () => {
+            navigate('/')
         }
     }); 
 
