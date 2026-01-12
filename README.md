@@ -53,3 +53,54 @@ The application supports communities, posts, comments, likes, and user authentic
 
 ```bash
 npm install
+```
+
+- **Create environment variables**: Copy or create a `.env` (or use your platform env settings) with the following values:
+
+```
+VITE_SUPABASE_URL=your-supabase-url
+VITE_SUPABASE_ANON_KEY=your-supabase-anon-key
+```
+
+- **Run development server**:
+
+```bash
+npm run dev
+```
+
+**Available Scripts**
+- **`npm run dev`**: Starts the Vite dev server.
+- **`npm run build`**: Builds the app (`tsc -b && vite build`).
+- **`npm run preview`**: Locally preview the production build.
+- **`npm run lint`**: Runs ESLint across the project.
+
+**Environment Variables**
+- **`VITE_SUPABASE_URL`**: Your Supabase project URL (starts with `https://...`).
+- **`VITE_SUPABASE_ANON_KEY`**: Supabase anon public key for client SDK.
+
+Store secrets securely — don't commit `.env` to version control.
+
+**Project Structure (key files)**
+- **`src/main.tsx`**: App bootstrap and router.
+- **`src/App.tsx`**: Top-level routes and layout.
+- **`src/supabase-client.ts`**: Supabase client instance.
+- **`src/contexts/AuthContext.tsx`**: Authentication context and hooks.
+- **`src/pages/`**: Page-level components (`Home`, `PostPage`, `CommunitiesPage`, etc.).
+- **`src/components/`**: Reusable UI components (posts, comments, community UI).
+
+**Notable Components**
+- **`Navbar.tsx`**: Navigation and auth actions.
+- **`CreateCommunity.tsx`**: Form to create a community.
+- **`CreatePost.tsx`**: Post creation UI.
+- **`PostList.tsx` / `PostItem.tsx`**: Post feed and item.
+- **`PostDetail.tsx`**: Post page with comments.
+- **`CommentSection.tsx` / `CommentItem.tsx`**: Comments UI.
+- **`LikeButton.tsx`**: Like/unlike post control.
+
+**Authentication & Data**
+- The app uses Supabase for authentication and as the primary database. See `src/supabase-client.ts` and `src/contexts/AuthContext.tsx` for setup and helper functions.
+
+
+
+
+
