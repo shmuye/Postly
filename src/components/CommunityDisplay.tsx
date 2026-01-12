@@ -28,22 +28,13 @@ const fetchCommunityPosts =  async (communityId: number): Promise<PostWithCommun
 
 const CommunityDisplay = ({ communityId }: props) => {
 
-  const isValidId = Number.isInteger(communityId);
+  
 
   const {data, isLoading, error } = useQuery<PostWithCommunity[], Error>({
     queryKey: ['communityPost', communityId],
-    queryFn: () => fetchCommunityPosts(communityId ?? null),
-    enabled: isValidId
+    queryFn: () => fetchCommunityPosts(communityId),
   });
-
-  if (!isValidId) {
-    return (
-      <div className="text-center py-4 text-red-500">
-        Invalid community ID
-      </div>
-    );
-  }
-  
+   
   if(isLoading) {
       return <div className="text-center py-4 ">Loading Community...</div>
   }
