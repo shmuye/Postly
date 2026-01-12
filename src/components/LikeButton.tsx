@@ -108,20 +108,20 @@ const LikeButton = ({ postId }: props) => {
 
   const likes = votes?.filter((v) => v.vote === 1).length || 0
   const dislikes = votes?.filter((v) => v.vote === -1).length || 0
-  const userVote = votes?.find((v) => v.user_id === user?.id)?.vote
+
 
            
   return (
     <div className="flex items-center space-x-4 my-4">
         {" "}
         <button
-           className='cursor-pointer'
+           className='cursor-pointer p-2 bg-green-500 flex gap-2 rounded-sm'
            onClick={() => mutate(1)}
         >
             <ThumbsUp /> { likes }
         </button>
         <button
-           className='cursor-pointer'
+           className='cursor-pointer p-2 bg-red-500 flex gap-2 rounded-sm'
            onClick={() => mutate(-1)}
         >
             <ThumbsDown  /> { dislikes}
