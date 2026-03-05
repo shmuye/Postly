@@ -6,9 +6,16 @@ import CreateCommunityPage from './pages/CreateCommunityPage.tsx'
 import PostPage from './pages/PostPage.tsx'
 import CommunitiesPage from './pages/CommunitiesPage.tsx'
 import CommunityPage from './pages/CommunityPage.tsx'
+import { useEffect } from 'react'
+import { keepSupabaseAlive } from './utils/keepAlive.ts'
 
 
 const App = () => {
+
+  useEffect(() => {
+    keepSupabaseAlive();
+  }, [])
+
   return (
     <div className='min-h-screen bg-black text-gray-100 transition-opacity duration-700 pt-20'>
       <Navbar />

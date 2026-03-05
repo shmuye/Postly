@@ -19,7 +19,7 @@ The application supports communities, posts, comments, likes, and user authentic
 - View posts scoped to individual communities
 
 ### Posts
-- Create text-based posts within communities
+- Create posts
 - View posts in a feed or as individual pages
 
 ### Engagement
