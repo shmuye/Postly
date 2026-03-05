@@ -67,7 +67,7 @@ const Navbar = () => {
             ) : (
               <button
                 onClick={signInWithGithub}
-                className="bg-blue-500 px-3 py-1 rounded"
+                className="bg-blue-500 px-3 py-1 rounded cursor-pointer"
               >
                 Sign in with GitHub
               </button>
