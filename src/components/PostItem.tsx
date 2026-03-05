@@ -72,6 +72,7 @@ export const PostItem = ({ post }: props) => {
         {
           openEditModal && <EditModal
                id={post.id} 
+               post={post}
                setOpenEditModal={setOpenEditModal}
                setOpenDropDown={setOpenDropDown}
                   
