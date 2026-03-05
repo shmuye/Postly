@@ -45,10 +45,10 @@ const CreateCommunity = () => {
   return (
     <form 
        onSubmit={handleSubmit}
-       className="mx-auto max-w-2xl space-y-4"
+       className="max-w-5xl mx-auto space-y-4"
        >
       <h2
-         className="text-5xl font-bold text-center mb-6 bg-gradient-to-r from-green-500 to-blue-500 bg-clip-text text-transparent whitespace-nowrap"
+         className="text-2xl sm:text-3xl md:text-5xl font-bold text-center mb-6 bg-gradient-to-r from-green-500 to-blue-500 bg-clip-text text-transparent whitespace-nowrap"
       >
          Create New Community
       </h2>

@@ -14,13 +14,13 @@ interface PostInput {
     community_id?: number | null;
 }
 
-const createPost = async (post: PostInput, imageFile: File | null) => {
+const createPost = async (post: PostInput, imageFile: File) => {
     
     const filePath = `${post.title}-${Date.now()}-${imageFile?.name}`;
 
     const { error: uploadError } = await supabase.storage
         .from('post_images')
-        .upload(filePath, imageFile!);
+        .upload(filePath, imageFile);
 
     if (uploadError) {
         throw new Error(uploadError.message);
@@ -91,7 +91,7 @@ const CreatePost = () => {
     
 
   return (
-    <form onSubmit={handleSubmit}  className="max-w-2xl mx-auto space-y-4">
+    <form onSubmit={handleSubmit}  className="max-w-2xl p-4 sm:p-6 mx-auto space-y-4">
         <div>
             <label 
                 htmlFor='title'
@@ -119,17 +119,16 @@ const CreatePost = () => {
         <div>
             <label htmlFor="community">Select Community</label>
             <select 
-               name="" 
                id="community"
-               onChange={handleCommunityChange}>
-                <option value={""}>
-                   ---Choose Community---
-                </option>
+               onChange={handleCommunityChange}
+               className="w-full border bg-gray-900 text-white border-white/20 p-2 rounded-md"
+               >
                 {
                     communities?.map((community) => (
                         <option 
                         key={community.id}
-                        value={community.id}>
+                        value={community.id}
+                        >
                             {community.name}
                         </option>
                     ))

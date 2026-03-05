@@ -34,18 +34,18 @@ const PostDetail = ({ postId }: props) => {
         return <div className="text-center text-red-500 py-4">Error loading post detail.</div>;
     }
   return (
-     <div className="space-y-6 w-[80%] mx-auto">
-      <h2 className="text-5xl font-bold mb-6 text-center bg-gradient-to-r from-green-500 to-blue-500 bg-clip-text text-transparent">
+     <div className="space-y-6 max-w-3xl mx-auto px-4 sm:px-6">
+      <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold mb-6 text-center bg-linear-to-r from-green-500 to-blue-500 bg-clip-text text-transparent wrap-break-word">
         {data?.title}
       </h2>
       {data?.image_url && (
         <img
           src={data.image_url}
           alt={data?.title}
-          className="mt-4 rounded object-cover w-full h-64"
+          className="mt-4 rounded object-cover w-full h-48 sm:h-64"
         />
       )}
-      <p className="text-gray-400">{data?.content}</p>
+      <p className="text-gray-400 wrap-break-words leading-relaxed">{data?.content}</p>
       <p className="text-gray-500 text-sm">
         Posted on: {new Date(data!.created_at).toLocaleDateString()}
       </p>
