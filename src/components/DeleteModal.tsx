@@ -1,19 +1,21 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "../supabase-client";
+import toast from "react-hot-toast";
 
 type DeleteModalProps = {
   id: number;
   setOpenDeleteModal: React.Dispatch<React.SetStateAction<boolean>>;
   setOpenDropDown: React.Dispatch<React.SetStateAction<boolean>>;
 };
-
+ 
 const deletePost = async (id: number) => {
-  const { error } = await supabase
+  const { data, error } = await supabase
     .from("posts")
     .delete()
     .eq("id", id);
 
   if (error) throw error;
+  console.log("deleted post", { data, error})
 };
 
 const DeleteModal: React.FC<DeleteModalProps> = ({
@@ -23,18 +25,22 @@ const DeleteModal: React.FC<DeleteModalProps> = ({
 }) => {
   const queryClient = useQueryClient();
 
-  const { mutate, isPending, isError } = useMutation({
+  const { mutate, isPending, isError, } = useMutation({
     mutationFn: deletePost,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["posts"] });
       setOpenDeleteModal(false);
       setOpenDropDown(false);
+      toast.success("Post deleted successfully")
     },
+    onError: (error: any) => {
+      toast.error(error.message || "Failed to delete post")
+    }
   });
-
+ 
   return (
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm"
+      className="fixed inset-0 z-100 flex items-center justify-center bg-black/60 backdrop-blur-sm"
       onClick={(e) => e.stopPropagation()}
     >
       <div
