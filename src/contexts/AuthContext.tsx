@@ -7,6 +7,8 @@ interface AuthContextType {
 
   user: User | null;
   signInWithGithub: () => void;
+  signUpWithEmail: (email: string, password: string) => Promise<void>;
+  signInWithEmail: (email: string, password: string) => Promise<void>;
   signOut: () => void;
 
 }
@@ -39,12 +41,44 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     });
   };
 
+  const signUpWithEmail = async (email: string, password: string) => {
+  const { error } = await supabase.auth.signUp({
+    email,
+    password,
+  });
+
+ 
+
+  if (error) {
+    console.error(error.message);
+    throw error;
+  }
+};
+
+const signInWithEmail = async (email: string, password: string) => {
+  const { error } = await supabase.auth.signInWithPassword({
+    email,
+    password,
+  });
+
+  if (error) {
+    console.error(error.message);
+    throw error;
+  }
+};
+
   const signOut = async () => {
       supabase.auth.signOut();
   };
 
   return (
-    <AuthContext.Provider value={{ user, signInWithGithub, signOut }}>
+    <AuthContext.Provider value={{ 
+      user, 
+      signInWithGithub, 
+      signUpWithEmail,
+      signInWithEmail,
+      signOut 
+      }}>
       {children}
     </AuthContext.Provider>
   );

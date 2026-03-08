@@ -9,6 +9,7 @@ import CommunityPage from './pages/CommunityPage.tsx'
 import { useEffect } from 'react'
 import { keepSupabaseAlive } from './utils/keepAlive.ts'
 import { Toaster } from 'react-hot-toast'
+import AuthPage from './pages/AuthPage.tsx'
 
 
 const App = () => {
@@ -39,6 +40,7 @@ const App = () => {
             <Route path="/post/:id" element={<PostPage />} />
             <Route path="/communities" element={<CommunitiesPage />} />
             <Route path="/community/:id" element={<CommunityPage />}/>
+            <Route path='/login' element={<AuthPage />} />
           </Routes>
       </div>
     </div>
