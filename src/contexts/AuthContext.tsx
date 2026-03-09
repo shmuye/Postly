@@ -7,6 +7,7 @@ interface AuthContextType {
 
   user: User | null;
   signInWithGithub: () => void;
+  signInWithGoogle: () => void;
   signUpWithEmail: (email: string, password: string) => Promise<void>;
   signInWithEmail: (email: string, password: string) => Promise<void>;
   signOut: () => void;
@@ -41,6 +42,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     });
   };
 
+  const signInWithGoogle = async () => {
+  await supabase.auth.signInWithOAuth({
+    provider: "google",
+    options: {
+      redirectTo: window.location.origin
+    }
+  });
+};
+
   const signUpWithEmail = async (email: string, password: string) => {
   const { error } = await supabase.auth.signUp({
     email,
@@ -74,6 +84,7 @@ const signInWithEmail = async (email: string, password: string) => {
   return (
     <AuthContext.Provider value={{ 
       user, 
+      signInWithGoogle,
       signInWithGithub, 
       signUpWithEmail,
       signInWithEmail,

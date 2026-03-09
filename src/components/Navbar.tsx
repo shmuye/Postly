@@ -5,7 +5,7 @@ import { useAuth } from '../contexts/AuthContext.tsx'
 
 const Navbar = () => {
     const [menuOpen, setMenuOpen] = useState(false)
-    const { signInWithGithub, user, signOut } = useAuth();
+    const { user, signOut } = useAuth();
     const closeMenu = () => { setMenuOpen(false) }
 
     const displayName = user?.user_metadata?.user_name || user?.email;    
@@ -65,12 +65,13 @@ const Navbar = () => {
                 </button>
               </div>
             ) : (
-              <button
-                onClick={signInWithGithub}
+
+              <Link
+                to={`login`}
                 className="bg-blue-500 px-3 py-1 rounded cursor-pointer"
               >
-                Sign in with GitHub
-              </button>
+                Sign In
+              </Link>
             )}
           </div>
 
