@@ -3,6 +3,8 @@ import type { Post } from "./PostList";
 import { supabase } from "../supabase-client";
 import LikeButton from "./LikeButton";
 import CommentSection from "./CommentSection";
+import Loader from "./Loader";
+
 interface props {
     postId: number;
 }       
@@ -28,7 +30,7 @@ const PostDetail = ({ postId }: props) => {
     });
 
     if (isLoading) {
-        return <div className="text-center py-4">Loading post detail...</div>;
+        return <Loader />
     }
     if (isError) {
         return <div className="text-center text-red-500 py-4">Error loading post detail.</div>;
