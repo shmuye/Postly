@@ -2,7 +2,7 @@
 
 ## Description
 
-A lightweight social media prototype built with **React**, **TypeScript**, **Vite**, **Supabase**, and **Tailwind CSS**.  
+A lightweight social media app built with **React**, **TypeScript**, **Vite**, **Supabase**, and **Tailwind CSS**.  
 The application supports communities, posts, comments, likes, and user authentication using **GitHub OAuth via Supabase**.
 
 ---
