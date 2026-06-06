@@ -12,6 +12,7 @@ interface PostInput {
     content: string ;
     avatar_url: string | null;
     community_id?: number | null;
+    user_id?: string | null;
 }
 
 const createPost = async (post: PostInput, imageFile: File) => {
@@ -47,6 +48,7 @@ const CreatePost = () => {
     const [communityId, setCommunityId] = useState<number | null>(null);
 
     const { user } = useAuth();
+   
     const navigate = useNavigate()
 
     const { data: communities} = useQuery<Community[], Error>({
@@ -69,11 +71,12 @@ const CreatePost = () => {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        if(!selectedFile) return;
+        if(!selectedFile || !user) return;
         mutate({post: { 
                title, content , 
                avatar_url: user?.user_metadata.avatar_url || null,
-               community_id: communityId
+               community_id: communityId,
+               user_id: user?.id || null
             },
             imageFile: selectedFile});
     }   

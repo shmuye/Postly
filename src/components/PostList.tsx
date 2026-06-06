@@ -15,10 +15,17 @@ export interface Post {
 
 
 const fetchPosts = async (): Promise<Post[]> => {
+
+    console.log("Refreshing posts...")
+
     const { data, error } = await supabase.rpc('get_posts_with_count')
+
     if (error) {
         throw new Error(error.message);
     }
+
+    console.log("Fetched posts", { data, error })
+    
     return data;
 }   
 
