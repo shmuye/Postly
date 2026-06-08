@@ -8,14 +8,25 @@ type DeleteModalProps = {
   setOpenDropDown: React.Dispatch<React.SetStateAction<boolean>>;
 };
  
-const deletePost = async (id: number) => {
+const deletePost = async (id: number): Promise<any[]> => {
   const { data, error } = await supabase
     .from("posts")
     .delete()
-    .eq("id", id);
+    .eq("id", id)
+    .select(); // Return deleted rows for confirmation
 
   if (error) throw error;
-  console.log("deleted post", { data, error})
+
+  // If no rows were deleted, treat as an error so UI can show failure
+  const rows = Array.isArray(data) ? data : (data ? [data] : []);
+  const deletedCount = rows.length;
+  console.log("deleted post", { rows, error, deletedCount });
+
+  if (deletedCount === 0) {
+    throw new Error("No post was deleted");
+  }
+
+  return rows;
 };
 
 const DeleteModal: React.FC<DeleteModalProps> = ({
@@ -25,7 +36,7 @@ const DeleteModal: React.FC<DeleteModalProps> = ({
 }) => {
   const queryClient = useQueryClient();
 
-  const { mutate, isPending, isError, } = useMutation({
+  const { mutate, isPending, isError } = useMutation<any[], any, number>({
     mutationFn: deletePost,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["posts"] });
