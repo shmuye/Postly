@@ -3,13 +3,15 @@ import type { Comment } from "./CommentSection"
 import { useAuth } from "../contexts/AuthContext"
 import { useMutation } from "@tanstack/react-query"
 import { useQueryClient } from "@tanstack/react-query"
-import { supabase } from "../supabase-client"
 import { ChevronDown, ChevronUp } from "lucide-react"
-interface props {
+import { Button } from "@/components/ui/button"
+import { Textarea } from "@/components/ui/textarea"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { supabase } from "@/lib/supabase-client"
 
+interface props {
   postId: number,
   comment: (Comment & { children?: Comment[] })
-
 }
 
 const createReply =  async (
@@ -72,91 +74,77 @@ const CommentItem = ({postId, comment}: props) => {
         
   }
 
- 
+  const initials = comment.author?.charAt(0).toUpperCase() ?? "?"
+
   return (
-    <div
-      className="pl-4 border-l border-white/10"
-    >
-      <div
-       className="mb-2"
-      >
-        <div
-          className="flex items-center space-x-2"
-        >
-          <span
-            className="text-sm font-bold text-blue-400"
-          >{comment.author}</span>
-          <span
-           className="text-xs text-gray-500"
-          >{new Date(comment.created_at).toLocaleString()}</span>
-        </div>
-        <p
-          className="text-gray-300"
-        >{comment.content}</p>
-        <button
-          className="text-blue-500 text-sm mt-1"
-          onClick={() =>  setShowReply(prev => !prev)} 
-        >
-          {
-            showReply ? "Cancel" : "Reply"
-          }
-        </button>
-      </div>
-      {
-        showReply && user && (
-          <form 
-              onSubmit={handleReplySubmit}
-              className="mb-2"
-            >
-              
-              <textarea 
-                  value={replyText}
-                  rows={3} 
-                  placeholder="write a Reply" 
-                  onChange={(e) => setReplyText(e.target.value)}
-                  className="w-full border border-white/10 bg-transparent p-2 rounded"
-                />
-                      <button
-                         type="submit" 
-                         className="mt-1 bg-blue-500 text-white px-3 py-1 rounded"
-                         >
-                        {
-                          isPending ? "Replying..." : "Post Reply"
-                        }
-
-                      </button>
-
-                       {
-                         isError && <p className="text-red-500">Error posting a Reply</p>
-                      }
-                    
-                    </form> 
-        )
-      }
-      {
-        comment.children && comment.children.length > 0 &&  (
-          <div>
-            <button
-            onClick={() => setIsCollapsed(prev => !prev)}
-            title={isCollapsed ? "Hide Replies" : "Show Replies"}
-            >{ isCollapsed ? <ChevronUp /> : <ChevronDown />}</button>
-
-            {
-              !isCollapsed && (
-                <div
-                 className="space-y-2"
-                >
-                  {
-                   comment.children.map((child, key) => (
-                  <CommentItem key={key}  comment={child} postId={postId}/>
-                ))
-                  }
-                </div>
-                )
-            }
+    <div className="border-l-2 border-primary/20 pl-4">
+      <div className="mb-3 space-y-2">
+        <div className="flex items-center gap-2.5">
+          <Avatar size="sm">
+            <AvatarFallback className="bg-primary/15 text-xs text-primary">
+              {initials}
+            </AvatarFallback>
+          </Avatar>
+          <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
+            <span className="text-sm font-semibold text-primary">
+              {comment.author}
+            </span>
+            <span className="text-xs text-muted-foreground">
+              {new Date(comment.created_at).toLocaleString()}
+            </span>
           </div>
-        )
-      }
+        </div>
+        <p className="text-sm leading-relaxed text-foreground/90">
+          {comment.content}
+        </p>
+        <Button
+          variant="ghost"
+          size="xs"
+          className="h-auto px-1 text-primary"
+          onClick={() => setShowReply(prev => !prev)}
+        >
+          {showReply ? "Cancel" : "Reply"}
+        </Button>
+      </div>
+
+      {showReply && user && (
+        <form onSubmit={handleReplySubmit} className="mb-3 space-y-2">
+          <Textarea
+            value={replyText}
+            rows={2}
+            placeholder="Write a reply..."
+            onChange={(e) => setReplyText(e.target.value)}
+          />
+          <Button type="submit" size="sm" disabled={isPending}>
+            {isPending ? "Replying..." : "Post Reply"}
+          </Button>
+          {isError && (
+            <p className="text-sm text-destructive">Error posting a reply</p>
+          )}
+        </form>
+      )}
+
+      {comment.children && comment.children.length > 0 && (
+        <div className="mt-2">
+          <Button
+            variant="ghost"
+            size="xs"
+            className="gap-1 text-muted-foreground"
+            onClick={() => setIsCollapsed(prev => !prev)}
+          >
+            {isCollapsed ? <ChevronDown className="size-3.5" /> : <ChevronUp className="size-3.5" />}
+            {isCollapsed ? "Show" : "Hide"} {comment.children.length} {comment.children.length === 1 ? "reply" : "replies"}
+          </Button>
+
+          {!isCollapsed && (
+            <div className="mt-2 space-y-3">
+              {comment.children.map((child) => (
+                <CommentItem key={child.id} comment={child} postId={postId} />
+              ))}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   )
 }

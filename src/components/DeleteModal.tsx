@@ -1,6 +1,15 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "../supabase-client";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { supabase } from "@/lib/supabase-client";
 
 type DeleteModalProps = {
   id: number;
@@ -13,11 +22,10 @@ const deletePost = async (id: number): Promise<any[]> => {
     .from("posts")
     .delete()
     .eq("id", id)
-    .select(); // Return deleted rows for confirmation
+    .select();
 
   if (error) throw error;
 
-  // If no rows were deleted, treat as an error so UI can show failure
   const rows = Array.isArray(data) ? data : (data ? [data] : []);
   const deletedCount = rows.length;
   console.log("deleted post", { rows, error, deletedCount });
@@ -48,53 +56,47 @@ const DeleteModal: React.FC<DeleteModalProps> = ({
       toast.error(error.message || "Failed to delete post")
     }
   });
+
+  const handleOpenChange = (open: boolean) => {
+    if (!open) {
+      setOpenDeleteModal(false);
+      setOpenDropDown(false);
+    }
+  };
  
   return (
-    <div
-      className="fixed inset-0 z-100 flex items-center justify-center bg-black/60 backdrop-blur-sm"
-      onClick={(e) => e.stopPropagation()}
-    >
-      <div
-        className="w-[90%] max-w-md bg-[rgb(24,27,32)] border border-[rgb(84,90,106)] rounded-2xl p-6 text-white shadow-xl"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <h2 className="text-xl font-semibold mb-2">Delete Post</h2>
-
-        <p className="text-gray-300 mb-6">
-          Are you sure you want to delete this post? This action cannot be undone.
-        </p>
+    <Dialog open onOpenChange={handleOpenChange}>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle>Delete Post</DialogTitle>
+          <DialogDescription>
+            Are you sure you want to delete this post? This action cannot be undone.
+          </DialogDescription>
+        </DialogHeader>
 
         {isError && (
-          <p className="text-red-400 text-sm mb-3">
+          <p className="text-sm text-destructive">
             Failed to delete the post.
           </p>
         )}
 
-        <div className="flex justify-end gap-3">
-          <button
-            className="px-4 py-2 rounded-lg border border-gray-500 hover:bg-gray-700 transition"
-            onClick={(e) => {
-              e.stopPropagation();
-              setOpenDeleteModal(false);
-              setOpenDropDown(false);
-            }}
+        <DialogFooter>
+          <Button
+            variant="outline"
+            onClick={() => handleOpenChange(false)}
           >
             Cancel
-          </button>
-
-          <button
+          </Button>
+          <Button
+            variant="destructive"
             disabled={isPending}
-            className="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 transition disabled:opacity-50"
-            onClick={(e) => {
-              e.stopPropagation();
-              mutate(id);
-            }}
+            onClick={() => mutate(id)}
           >
             {isPending ? "Deleting..." : "Delete"}
-          </button>
-        </div>
-      </div>
-    </div>
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 };
 

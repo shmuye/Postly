@@ -1,5 +1,4 @@
-import { supabase } from "../supabase-client";
-
+import { supabase } from "@/lib/supabase-client";
 
 export const keepSupabaseAlive = async () => {
   try {

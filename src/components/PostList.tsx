@@ -1,7 +1,8 @@
 import { useQuery } from "@tanstack/react-query"
-import { supabase } from "../supabase-client"
+import { supabase } from "@/lib/supabase-client";
 import { PostItem } from "./PostItem"; 
 import Loader from "./Loader";
+
 export interface Post {
     id: number;
     title: string;
@@ -36,22 +37,30 @@ const PostList = () => {
     });
 
     if (isLoading) {
-
        return <Loader />
-        
     }
 
     if (isError) {
-        return <div className="text-center text-red-500 py-4">Error loading posts.</div>;
-    }     
+        return (
+          <p className="py-12 text-center text-destructive">
+            Error loading posts.
+          </p>
+        );
+    }
+
+    if (!data?.length) {
+      return (
+        <p className="py-12 text-center text-muted-foreground">
+          No posts yet. Be the first to share something!
+        </p>
+      )
+    }
    
   return (
-    <div className="p-4 md:p-0 flex flex-col md:flex-row flex-wrap justify-center gap-4 md:w-[80%] mx-auto">
-        {
-            data && data.map(post => (
-                <PostItem key={post.id} post={post} />
-            ))      
-        }
+    <div className="flex flex-wrap justify-center gap-4">
+        {data.map(post => (
+            <PostItem key={post.id} post={post} />
+        ))}
     </div>
   )
 }

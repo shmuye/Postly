@@ -1,9 +1,10 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { supabase } from '../supabase-client';
 import { ThumbsDown, ThumbsUp } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useQueryClient } from '@tanstack/react-query';
-
+import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
+import { supabase } from '@/lib/supabase-client';
 
 
 interface props {
@@ -11,12 +12,10 @@ interface props {
 }
  
 interface Vote {
-
      id: number,
      post_id: number,
      user_id: string,
      vote: number
-
 }
 
 const vote = async (voteValue: number, postId: number, userId: string) => {
@@ -100,33 +99,38 @@ const LikeButton = ({ postId }: props) => {
     })
 
     if(isLoading) {
-        return <div>Loading Votes</div>
+        return (
+          <div className="flex gap-3">
+            <Skeleton className="h-9 w-24 rounded-lg" />
+            <Skeleton className="h-9 w-24 rounded-lg" />
+          </div>
+        )
     }
     if(error) {
-        return <div>Error: {error.message }</div>
+        return <p className="text-sm text-destructive">Error: {error.message}</p>
     }
 
   const likes = votes?.filter((v) => v.vote === 1).length || 0
   const dislikes = votes?.filter((v) => v.vote === -1).length || 0
 
-
-           
   return (
-    <div className="flex items-center space-x-4 my-4">
-        {" "}
-        <button
-           className='cursor-pointer p-2 bg-green-500 flex gap-2 rounded-sm'
+    <div className="flex flex-wrap items-center gap-3">
+        <Button
+           variant="outline"
+           className="gap-2 border-emerald-500/30 hover:bg-emerald-500/10 hover:text-emerald-400"
            onClick={() => mutate(1)}
         >
-            <ThumbsUp /> { likes }
-        </button>
-        <button
-           className='cursor-pointer p-2 bg-red-500 flex gap-2 rounded-sm'
+            <ThumbsUp className="size-4" />
+            {likes}
+        </Button>
+        <Button
+           variant="outline"
+           className="gap-2 border-rose-500/30 hover:bg-rose-500/10 hover:text-rose-400"
            onClick={() => mutate(-1)}
         >
-            <ThumbsDown  /> { dislikes}
-        </button>
-
+            <ThumbsDown className="size-4" />
+            {dislikes}
+        </Button>
     </div>
   )
 }

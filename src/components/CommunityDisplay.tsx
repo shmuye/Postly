@@ -1,8 +1,9 @@
 import { useQuery } from "@tanstack/react-query"
-import { supabase } from "../supabase-client"
 import type { Post } from "./PostList"
 import { PostItem } from "./PostItem"
-
+import PageHeader from "./PageHeader"
+import Loader from "./Loader"
+import { supabase } from "@/lib/supabase-client"
 
 
 interface props {
@@ -28,45 +29,43 @@ const fetchCommunityPosts =  async (communityId: number): Promise<PostWithCommun
 
 const CommunityDisplay = ({ communityId }: props) => {
 
-  
-
   const {data, isLoading, error } = useQuery<PostWithCommunity[], Error>({
     queryKey: ['communityPost', communityId],
     queryFn: () => fetchCommunityPosts(communityId),
   });
    
   if(isLoading) {
-      return <div className="text-center py-4 ">Loading Community...</div>
+      return <Loader />
   }
 
     if(error) {
-      return <div className="text-center py-4 text-red-500">Error fetching Community: {error.message}</div>
+      return (
+        <p className="py-12 text-center text-destructive">
+          Error fetching community: {error.message}
+        </p>
+      )
     }
-  return (
-    <div>
-      <h2
-         className="text-5xl font-bold mb-6 text-center bg-gradient-to-r from-green-500 to-blue-500 bg-clip-text text-transparent"
-      >
-        { data &&  data[0]?.community?.name } Community Posts  
-      </h2>
 
-      {
-        data && data.length > 0 ? (
-          <div
-            className="flex flex-wrap gap-6 justify-center"
-          >
-            {
-              data.map((post) => (
-               <PostItem key={post.id} post={post} />
-              ))
-            }
-          </div>
-        ) :
-         (<p
-           className="text-center text-gray-400"
-         >No posts in this community yet</p>)
-      }
-      
+  const communityName = data?.[0]?.community?.name ?? "Community"
+
+  return (
+    <div className="space-y-8">
+      <PageHeader
+        title={`${communityName} Posts`}
+        description="Explore posts from this community"
+      />
+
+      {data && data.length > 0 ? (
+        <div className="flex flex-wrap justify-center gap-4">
+          {data.map((post) => (
+            <PostItem key={post.id} post={post} />
+          ))}
+        </div>
+      ) : (
+        <p className="py-12 text-center text-muted-foreground">
+          No posts in this community yet.
+        </p>
+      )}
     </div>
   )
 }

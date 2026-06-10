@@ -1,7 +1,12 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { supabase } from "../supabase-client"
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
+import { supabase } from "@/lib/supabase-client"
 
 
 interface CommunityInput {
@@ -43,50 +48,47 @@ const CreateCommunity = () => {
          mutate({ name, description } )
   }    
   return (
-    <form 
-       onSubmit={handleSubmit}
-       className="max-w-5xl mx-auto space-y-4"
-       >
-      <h2
-         className="text-2xl sm:text-3xl md:text-5xl font-bold text-center mb-6 bg-linear-to-r from-green-500 to-blue-500 bg-clip-text text-transparent whitespace-nowrap"
-      >
-         Create New Community
-      </h2>
+    <Card className="mx-auto max-w-2xl">
+      <CardHeader>
+        <CardTitle>Create Community</CardTitle>
+        <CardDescription>Start a new space for people to connect</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div className="space-y-2">
+            <Label htmlFor="name">Community Name</Label>
+            <Input
+              type="text"
+              id="name"
+              required
+              placeholder="e.g. Web Developers"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            />
+          </div>
 
-      <div>
-        <label
-         className="block mb-2 font-medium"
-        >Community Name</label>
-        <input 
-            type="text"  
-            id="name" 
-            required
-            className="w-full border border-white/20 bg-transparent p-2 rounded"
-            onChange={(e) => setName(e.target.value)} 
-          />
-      </div>
+          <div className="space-y-2">
+            <Label htmlFor="description">Description</Label>
+            <Textarea
+              id="description"
+              required
+              rows={3}
+              placeholder="What is this community about?"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+            />
+          </div>
 
-       <div>
-        <label
-         className="block mb-2 font-medium"
-        >Description</label>
-        <textarea 
-             id="description" 
-             required 
-             rows={3}
-             className="w-full border border-white/20 bg-transparent p-2 rounded"
-             onChange={(e) => setDescription(e.target.value)} 
-          />
-      </div>
+          <Button type="submit" disabled={isPending}>
+            {isPending ? "Creating..." : "Create Community"}
+          </Button>
 
-      <button
-       type="submit"
-      className="bg-blue-500 text-white px-4 py-2 rounded cursor-pointer"
-      >{isPending ? "Creating" : "Create Community"}</button>
-      {
-        isError && <div>Error Creating Community</div>
-      }
-    </form>
+          {isError && (
+            <p className="text-sm text-destructive">Error creating community</p>
+          )}
+        </form>
+      </CardContent>
+    </Card>
   )
 }
 

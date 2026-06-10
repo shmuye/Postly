@@ -1,12 +1,14 @@
 import CommunityList from "../components/CommunityList"
+import PageHeader from "../components/PageHeader"
 
 const CommunitiesPage = () => {
   return (
-    <div>
-          <h2 className="text-2xl sm:text-3xl md:text-5xl  font-bold mb-6 text-center bg-linear-to-r from-green-500 to-blue-500 bg-clip-text text-transparent">
-        Communities
-      </h2>
-        <CommunityList />
+    <div className="space-y-8">
+      <PageHeader
+        title="Communities"
+        description="Browse and join communities that match your interests"
+      />
+      <CommunityList />
     </div>
   )
 }

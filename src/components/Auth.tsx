@@ -1,6 +1,12 @@
 import { useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
+import { Github } from "lucide-react";
 
 export default function AuthComponent() {
   const navigate = useNavigate();
@@ -31,78 +37,87 @@ export default function AuthComponent() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-950 px-4">
+    <div className="flex min-h-[calc(100vh-8rem)] items-center justify-center px-4">
+      <Card className="w-full max-w-md">
+        <CardHeader className="text-center">
+          <CardTitle className="text-2xl">
+            {isLogin ? "Welcome Back" : "Create Account"}
+          </CardTitle>
+          <CardDescription>
+            {isLogin
+              ? "Sign in to share posts and join communities"
+              : "Create an account to get started"}
+          </CardDescription>
+        </CardHeader>
 
-      <div className="w-full max-w-md bg-gray-900 border border-white/10 rounded-xl p-8 shadow-xl">
+        <CardContent className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="you@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </div>
 
-        <h2 className="text-3xl font-bold text-center text-white mb-6">
-          {isLogin ? "Welcome Back" : "Create Account"}
-        </h2>
+            <div className="space-y-2">
+              <Label htmlFor="password">Password</Label>
+              <Input
+                id="password"
+                type="password"
+                placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+            </div>
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+            <Button type="submit" className="w-full" disabled={loading}>
+              {loading ? "Loading..." : isLogin ? "Sign In" : "Sign Up"}
+            </Button>
+          </form>
 
-          <input
-            type="email"
-            placeholder="Email"
-            className="w-full border border-white/20 bg-transparent text-white p-3 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-
-          <input
-            type="password"
-            placeholder="Password"
-            className="w-full border border-white/20 bg-transparent text-white p-3 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="bg-blue-500 hover:bg-blue-600 transition text-white p-3 rounded-md font-medium"
-          >
-            {loading ? "Loading..." : isLogin ? "Login" : "Sign Up"}
-          </button>
-
-          <button
+          <Button
             type="button"
+            variant="outline"
+            className="w-full"
             onClick={signInWithGoogle}
-            className="bg-red-500 hover:bg-red-600 transition text-white p-3 rounded-md font-medium"
           >
             Continue with Google
-          </button>
+          </Button>
 
-        </form>
+          <div className="flex items-center gap-3">
+            <Separator className="flex-1" />
+            <span className="text-xs text-muted-foreground">OR</span>
+            <Separator className="flex-1" />
+          </div>
 
-        <div className="flex items-center gap-3 my-6 text-gray-400">
-          <div className="flex-1 h-px bg-white/20"></div>
-          <span className="text-sm">OR</span>
-          <div className="flex-1 h-px bg-white/20"></div>
-        </div>
-
-        <button
-          onClick={signInWithGithub}
-          className="w-full bg-black hover:bg-gray-800 transition text-white p-3 rounded-md font-medium"
-        >
-          Continue with GitHub
-        </button>
-
-        <p className="mt-6 text-center text-gray-400">
-          {isLogin ? "Don't have an account?" : "Already have an account?"}
-
-          <button
-            className="ml-2 text-blue-500 hover:underline"
-            onClick={() => setIsLogin(!isLogin)}
+          <Button
+            type="button"
+            variant="secondary"
+            className="w-full"
+            onClick={signInWithGithub}
           >
-            {isLogin ? "Sign Up" : "Login"}
-          </button>
-        </p>
+            <Github className="size-4" />
+            Continue with GitHub
+          </Button>
 
-      </div>
-
+          <p className="text-center text-sm text-muted-foreground">
+            {isLogin ? "Don't have an account?" : "Already have an account?"}
+            <Button
+              variant="link"
+              className="px-1"
+              onClick={() => setIsLogin(!isLogin)}
+            >
+              {isLogin ? "Sign Up" : "Sign In"}
+            </Button>
+          </p>
+        </CardContent>
+      </Card>
     </div>
   );
 }

@@ -1,167 +1,147 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
-import { Menu, X } from "lucide-react";
+import { Link, useLocation } from "react-router-dom";
+import { Menu, PenSquare, Users, PlusCircle } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import { Separator } from "@/components/ui/separator";
+import { cn } from "@/lib/utils";
+
+const navLinks = [
+  { to: "/", label: "Home" },
+  { to: "/create", label: "Create Post", icon: PenSquare, auth: true },
+  { to: "/communities", label: "Communities", icon: Users, auth: true },
+  { to: "/community/create", label: "Create Community", icon: PlusCircle, auth: true },
+];
 
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const { user, signOut } = useAuth();
-
-  const closeMenu = () => setMenuOpen(false);
+  const location = useLocation();
 
   const displayName =
     user?.user_metadata?.user_name || user?.email || "User";
 
-  return (
-    <nav className="fixed top-0 w-full z-40 bg-[rgba(10,10,10,0.8)] backdrop-blur-lg border-b border-white/10 shadow-lg">
-      <div className="max-w-5xl mx-auto px-4">
-        <div className="flex justify-between items-center h-16">
-          <Link to="/" className="font-mono text-xl font-bold text-white">
-            Post<span className="text-purple-500">ly</span>
-          </Link>
+  const initials = displayName
+    .split(" ")
+    .map((n: string) => n[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
 
-          {/* Desktop Links */}
-          <div className="hidden md:flex items-center space-x-8">
-            <Link
-              to="/"
-              className="text-gray-300 hover:text-white transition-colors"
-            >
-              Home
-            </Link>
+  const links = navLinks.filter((link) => !link.auth || user);
 
-            {user && (
-              <>
-                <Link
-                  to="/create"
-                  className="text-gray-300 hover:text-white transition-colors"
-                >
-                  Create Post
-                </Link>
-
-                <Link
-                  to="/communities"
-                  className="text-gray-300 hover:text-white transition-colors"
-                >
-                  Communities
-                </Link>
-
-                <Link
-                  to="/community/create"
-                  className="text-gray-300 hover:text-white transition-colors"
-                >
-                  Create Community
-                </Link>
-              </>
-            )}
-          </div>
-
-          {/* Auth */}
-          <div className="hidden md:flex items-center">
-            {user ? (
-              <div className="flex items-center space-x-4">
-                {user.user_metadata?.avatar_url && (
-                  <img
-                    src={user.user_metadata.avatar_url}
-                    alt="avatar"
-                    className="w-8 h-8 rounded-full object-cover"
-                  />
-                )}
-
-                <span className="text-gray-300">{displayName}</span>
-
-                <button
-                  onClick={signOut}
-                  className="bg-red-500 px-3 py-1 rounded hover:bg-red-600"
-                >
-                  Sign Out
-                </button>
-              </div>
-            ) : (
-              <Link
-                to="/login"
-                className="bg-blue-500 px-3 py-1 rounded hover:bg-blue-600"
-              >
-                Sign In
-              </Link>
-            )}
-          </div>
-
-          {/* Mobile Button */}
-          <div className="md:hidden">
-            <button
-              onClick={() => setMenuOpen((prev) => !prev)}
-              className="text-gray-300"
-            >
-              {menuOpen ? <X size={24} /> : <Menu size={24} />}
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Mobile Menu */}
-      {menuOpen && (
-        <div className="md:hidden bg-[rgba(10,10,10,0.9)]">
-          <div className="px-2 pt-2 pb-3 space-y-1">
-
-            <Link
-              to="/"
-              onClick={closeMenu}
-              className="block px-3 py-2 text-gray-300 hover:text-white"
-            >
-              Home
-            </Link>
-
-            {user && (
-              <>
-                <Link
-                  to="/create"
-                  onClick={closeMenu}
-                  className="block px-3 py-2 text-gray-300 hover:text-white"
-                >
-                  Create Post
-                </Link>
-
-                <Link
-                  to="/communities"
-                  onClick={closeMenu}
-                  className="block px-3 py-2 text-gray-300 hover:text-white"
-                >
-                  Communities
-                </Link>
-
-                <Link
-                  to="/community/create"
-                  onClick={closeMenu}
-                  className="block px-3 py-2 text-gray-300 hover:text-white"
-                >
-                  Create Community
-                </Link>
-              </>
-            )}
-
-            {user ? (
-              <button
-                onClick={() => {
-                  signOut();
-                  closeMenu();
-                }}
-                className="block w-full text-left px-3 py-2 text-red-400"
-              >
-                Sign Out
-              </button>
-            ) : (
-              <Link
-                to="/login"
-                onClick={closeMenu}
-                className="block px-3 py-2 text-blue-400"
-              >
-                Sign In
-              </Link>
-            )}
-          </div>
-        </div>
+  const NavLink = ({ to, label, onClick }: { to: string; label: string; onClick?: () => void }) => (
+    <Link
+      to={to}
+      onClick={onClick}
+      className={cn(
+        "rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground",
+        location.pathname === to
+          ? "bg-accent text-accent-foreground"
+          : "text-muted-foreground"
       )}
-    </nav>
+    >
+      {label}
+    </Link>
+  );
+
+  return (
+    <header className="fixed top-0 z-50 w-full border-b border-border/60 bg-background/80 backdrop-blur-xl">
+      <div className="container mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
+        <Link to="/" className="flex items-center gap-1 text-xl font-bold tracking-tight">
+          Post<span className="text-primary">ly</span>
+        </Link>
+
+        <nav className="hidden items-center gap-1 md:flex">
+          {links.map((link) => (
+            <NavLink key={link.to} to={link.to} label={link.label} />
+          ))}
+        </nav>
+
+        <div className="hidden items-center gap-3 md:flex">
+          {user ? (
+            <>
+              <div className="flex items-center gap-2.5">
+                <Avatar size="sm">
+                  <AvatarImage src={user.user_metadata?.avatar_url} alt={displayName} />
+                  <AvatarFallback>{initials}</AvatarFallback>
+                </Avatar>
+                <span className="max-w-[120px] truncate text-sm text-muted-foreground">
+                  {displayName}
+                </span>
+              </div>
+              <Button variant="destructive" size="sm" onClick={signOut}>
+                Sign Out
+              </Button>
+            </>
+          ) : (
+            <Button asChild size="sm">
+              <Link to="/login">Sign In</Link>
+            </Button>
+          )}
+        </div>
+
+        <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
+          <SheetTrigger asChild className="md:hidden">
+            <Button variant="ghost" size="icon">
+              <Menu className="size-5" />
+              <span className="sr-only">Open menu</span>
+            </Button>
+          </SheetTrigger>
+          <SheetContent side="right" className="w-[280px]">
+            <SheetHeader>
+              <SheetTitle>Menu</SheetTitle>
+            </SheetHeader>
+            <nav className="flex flex-col gap-1 px-4">
+              {links.map((link) => (
+                <NavLink
+                  key={link.to}
+                  to={link.to}
+                  label={link.label}
+                  onClick={() => setMenuOpen(false)}
+                />
+              ))}
+            </nav>
+            <Separator className="my-4" />
+            <div className="px-4">
+              {user ? (
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3">
+                    <Avatar>
+                      <AvatarImage src={user.user_metadata?.avatar_url} alt={displayName} />
+                      <AvatarFallback>{initials}</AvatarFallback>
+                    </Avatar>
+                    <span className="text-sm font-medium">{displayName}</span>
+                  </div>
+                  <Button
+                    variant="destructive"
+                    className="w-full"
+                    onClick={() => {
+                      signOut();
+                      setMenuOpen(false);
+                    }}
+                  >
+                    Sign Out
+                  </Button>
+                </div>
+              ) : (
+                <Button asChild className="w-full" onClick={() => setMenuOpen(false)}>
+                  <Link to="/login">Sign In</Link>
+                </Button>
+              )}
+            </div>
+          </SheetContent>
+        </Sheet>
+      </div>
+    </header>
   );
 };
 

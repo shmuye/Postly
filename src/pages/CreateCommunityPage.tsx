@@ -1,9 +1,11 @@
 import CreateCommunity from "../components/CreateCommunity"
+import PageHeader from "../components/PageHeader"
 
 const CreateCommunityPage = () => {
   return (
-    <div className="pt-20">
-            <CreateCommunity />
+    <div className="space-y-8">
+      <PageHeader title="Create Community" />
+      <CreateCommunity />
     </div>
   )
 }

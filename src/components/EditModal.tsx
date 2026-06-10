@@ -1,7 +1,19 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "../supabase-client";
 import type { Post } from "./PostList";
 import { useState } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { supabase } from "@/lib/supabase-client";
 
 type EditModalProps = {
     id: number, 
@@ -53,60 +65,64 @@ const EditModal: React.FC<EditModalProps> = ({
       },
     });
   };
+
+  const handleOpenChange = (open: boolean) => {
+    if (!open) {
+      setOpenEditModal(false);
+      setOpenDropDown(false);
+    }
+  };
     
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[100]">
-      <div className="bg-[#181b20] w-[90%] max-w-lg p-6 rounded-xl border border-gray-700 text-white">
-        <h2 className="text-xl font-semibold mb-4">Edit Post</h2>
+    <Dialog open onOpenChange={handleOpenChange}>
+      <DialogContent className="sm:max-w-lg">
+        <DialogHeader>
+          <DialogTitle>Edit Post</DialogTitle>
+          <DialogDescription>
+            Update your post title and content.
+          </DialogDescription>
+        </DialogHeader>
 
         <form onSubmit={handleUpdate} className="space-y-4">
-          <div>
-            <label className="block mb-1 text-sm">Title</label>
-            <input
+          <div className="space-y-2">
+            <Label htmlFor="edit-title">Title</Label>
+            <Input
+              id="edit-title"
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="w-full p-2 rounded bg-transparent border border-gray-600"
             />
           </div>
-          <div>
-            <label className="block mb-1 text-sm">Content</label>
-            <textarea
+          <div className="space-y-2">
+            <Label htmlFor="edit-content">Content</Label>
+            <Textarea
+              id="edit-content"
               rows={4}
               value={content}
               onChange={(e) => setContent(e.target.value)}
-              className="w-full p-2 rounded bg-transparent border border-gray-600"
             />
           </div>
 
-          <div className="flex justify-end gap-3 pt-4">
-            <button
+          <DialogFooter>
+            <Button
               type="button"
-              onClick={() => {
-                setOpenEditModal(false);
-                setOpenDropDown(false);
-              }}
-              className="px-4 py-2 bg-gray-600 rounded cursor-pointer"
+              variant="outline"
+              onClick={() => handleOpenChange(false)}
             >
               Cancel
-            </button>
-            <button
-              type="submit"
-              className="px-4 py-2 bg-blue-600 rounded cursor-pointer"
-            >
+            </Button>
+            <Button type="submit" disabled={isPending}>
               {isPending ? "Saving..." : "Save"}
-            </button>
-          </div>
+            </Button>
+          </DialogFooter>
 
           {isError && (
-            <p className="text-red-500 text-sm">Error updating post</p>
+            <p className="text-sm text-destructive">Error updating post</p>
           )}
         </form>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }
 
 export default EditModal
-
-

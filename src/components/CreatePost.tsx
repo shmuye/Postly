@@ -1,10 +1,23 @@
 import React, { type ChangeEvent } from 'react'
 import { useState } from 'react';
-import { supabase } from '../supabase-client';
 import  { useMutation, useQuery } from '@tanstack/react-query';
 import { useAuth } from '../contexts/AuthContext';
 import { fetchCommunities, type Community } from './CommunityList';
 import { useNavigate } from 'react-router-dom';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { ImagePlus } from 'lucide-react';
+import { supabase } from '@/lib/supabase-client';
 
 
 interface PostInput {
@@ -50,8 +63,6 @@ const createPost = async (post: PostInput, imageFile: File) => {
 
 const CreatePost = () => {
 
-
-
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -95,85 +106,88 @@ const CreatePost = () => {
             setSelectedFile(e.target.files[0]);
         }
     }
-  
-    const handleCommunityChange = (e: ChangeEvent<HTMLSelectElement>) => {
-            const value = e.target.value;
-            setCommunityId(value ? Number(value) : null);
-    }
     
 
   return (
-    <form onSubmit={handleSubmit}  className="max-w-2xl p-4 sm:p-6 mx-auto space-y-4">
-        <div>
-            <label 
-                htmlFor='title'
-                className="block mb-2 font-medium">Title </label>
-            <input 
-               id='title'
-               type="text" 
-               placeholder="Post Title" 
-               onChange={(e) => setTitle(e.target.value)}
-               className="w-full border border-white/20 bg-transparent p-2 rounded"/>
+    <Card className="mx-auto max-w-2xl">
+      <CardHeader>
+        <CardTitle>New Post</CardTitle>
+        <CardDescription>Share something with the community</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div className="space-y-2">
+            <Label htmlFor="title">Title</Label>
+            <Input
+              id="title"
+              type="text"
+              placeholder="Post title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              required
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="content">Content</Label>
+            <Textarea
+              id="content"
+              placeholder="What's on your mind?"
+              rows={5}
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              required
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="community">Community</Label>
+            <Select
+              onValueChange={(value) => setCommunityId(Number(value))}
+            >
+              <SelectTrigger id="community" className="w-full">
+                <SelectValue placeholder="Select a community" />
+              </SelectTrigger>
+              <SelectContent>
+                {communities?.map((community) => (
+                  <SelectItem key={community.id} value={String(community.id)}>
+                    {community.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="image">Image</Label>
+            <div className="flex items-center gap-3">
+              <Input
+                type="file"
+                onChange={handleFileChange}
+                id="image"
+                accept="image/*"
+                required
+                className="cursor-pointer file:mr-3 file:rounded-md file:border-0 file:bg-primary file:px-3 file:py-1 file:text-sm file:font-medium file:text-primary-foreground"
+              />
+              {selectedFile && (
+                <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                  <ImagePlus className="size-3.5" />
+                  {selectedFile.name}
+                </span>
+              )}
             </div>
-        <div>
-            <label
-                htmlFor='content'
-                className="block mb-2 font-medium"
-                >Post Content</label>
-            <textarea 
-               onChange={(e) => setContent(e.target.value)}
-               id='content'
-               placeholder="Post Content" 
-               className="w-full border border-white/20 bg-transparent p-2 rounded" 
-               rows={5}
-               />
-        </div>
-        <div>
-            <label htmlFor="community">Select Community</label>
-            <select 
-               id="community"
-               onChange={handleCommunityChange}
-               className="w-full border bg-gray-900 text-white border-white/20 p-2 rounded-md"
-               >
-                {
-                    communities?.map((community) => (
-                        <option 
-                        key={community.id}
-                        value={community.id}
-                        >
-                            {community.name}
-                        </option>
-                    ))
-                 }
+          </div>
 
-            </select>
-        </div>
-        <div>
-            <label
-                htmlFor='image'
-                className="block mb-2 font-medium"
-            >Upload Image</label>
-            <input
-               type='file'
-               onChange={handleFileChange}
-               id='image'
-               accept='image/*'
-               required
-               className="w-full text-gray-200"
-             />
-        </div>
+          <Button type="submit" className="w-full sm:w-auto" disabled={isPending}>
+            {isPending ? 'Creating...' : 'Create Post'}
+          </Button>
 
-        <button 
-          type="submit" 
-          className="bg-blue-500 text-white px-4 py-2 rounded cursor-pointer">
-            {
-                isPending ? 'Creating' : 'Create Post'
-            }
-        </button>
-        {
-            isError && <p>Error Creating Post</p>
-        }
-    </form>
+          {isError && (
+            <p className="text-sm text-destructive">Error creating post</p>
+          )}
+        </form>
+      </CardContent>
+    </Card>
   )
 }
 

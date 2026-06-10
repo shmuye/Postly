@@ -83,7 +83,7 @@ Store secrets securely — don't commit `.env` to version control.
 **Project Structure (key files)**
 - **`src/main.tsx`**: App bootstrap and router.
 - **`src/App.tsx`**: Top-level routes and layout.
-- **`src/supabase-client.ts`**: Supabase client instance.
+- **`src/lib/supabase-client.ts`**: Supabase client instance.
 - **`src/contexts/AuthContext.tsx`**: Authentication context and hooks.
 - **`src/pages/`**: Page-level components (`Home`, `PostPage`, `CommunitiesPage`, etc.).
 - **`src/components/`**: Reusable UI components (posts, comments, community UI).

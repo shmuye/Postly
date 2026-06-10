@@ -1,10 +1,13 @@
 import { useState } from "react"
 import { useAuth } from "../contexts/AuthContext"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-
-
-import { supabase } from "../supabase-client"
 import CommentItem from "./CommentItem"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Textarea } from "@/components/ui/textarea"
+import { Skeleton } from "@/components/ui/skeleton"
+import { MessageSquare } from "lucide-react"
+import { supabase } from "@/lib/supabase-client"
 
 interface props {
     postId: number
@@ -122,64 +125,66 @@ const buildCommentTree = (
 
 
   if(isLoading) {
-    return <div>Loading comments</div>
+    return (
+      <div className="space-y-3">
+        <Skeleton className="h-24 w-full rounded-xl" />
+        <Skeleton className="h-16 w-full rounded-xl" />
+      </div>
+    )
   }
 
   if(error) {
-    return <div>{error.message} </div>
+    return <p className="text-destructive">{error.message}</p>
   }
 
   const commentTree = comments ? buildCommentTree(comments) : []
+
   return (
-    <div className="mt-6">
-       <h3 className="text-2xl font-semibold mb-4">Comments</h3>
-        {
-            user ? (
-                   <form 
-                      onSubmit={handleSubmit}
-                      className="mb-4"
-                      >
-                      <textarea 
-                          value={newComment}
-                          rows={3} 
-                          placeholder="write a comment" 
-                          className="w-full border border-white/10 bg-transparent p-2 rounded"
-                          onChange={(e) => setNewComment(e.target.value)}
-                        />
-                      <button
-                         type="submit" 
-                         className="mt-2 bg-blue-500 text-white px-4 py-2 rounded cursor-pointer"
-                         >
-                        {
-                          isPending ? "Posting..." : "Post Comment"
-                        }
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2 text-lg">
+          <MessageSquare className="size-5 text-primary" />
+          Comments
+          {comments && comments.length > 0 && (
+            <span className="text-sm font-normal text-muted-foreground">
+              ({comments.length})
+            </span>
+          )}
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-6">
+        {user ? (
+          <form onSubmit={handleSubmit} className="space-y-3">
+            <Textarea
+              value={newComment}
+              rows={3}
+              placeholder="Write a comment..."
+              onChange={(e) => setNewComment(e.target.value)}
+            />
+            <Button type="submit" size="sm" disabled={isPending}>
+              {isPending ? "Posting..." : "Post Comment"}
+            </Button>
+            {isError && (
+              <p className="text-sm text-destructive">Error posting a comment</p>
+            )}
+          </form>
+        ) : (
+          <p className="text-sm text-muted-foreground">
+            You must sign in to post a comment.
+          </p>
+        )}
 
-                      </button>
-
-                       {
-                         isError && <p className="text-red-500 mt-2">Error posting a comment</p>
-                      }
-                    
-                    </form> 
-
-                  
-            )
-            : <p 
-             className="mb-4 text-gray-600"
-            >You must login to post a comment</p>
-        }
-
-        <div  
-           className="space-y-4">
-        {commentTree.map((comment) => (
-          <CommentItem
+        <div className="space-y-4">
+          {commentTree.map((comment) => (
+            <CommentItem
               key={comment.id}
               comment={comment}
               postId={postId}
-          />
-        ))}
-      </div>
-    </div>
+            />
+          ))}
+        </div>
+      </CardContent>
+    </Card>
   )
 }
 

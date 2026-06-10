@@ -1,12 +1,11 @@
-import { Spinner } from "./ui/spinner"
+import { Spinner } from "@/components/ui/spinner"
 
 const Loader = () => {
-  
-        return (
-            <div className="w-[80%] mx-auto flex justify-center items-center">
-               <Spinner className="size-4"/>
-            </div>
-        )
+  return (
+    <div className="flex min-h-[200px] items-center justify-center py-12">
+      <Spinner className="size-8 text-primary" />
+    </div>
+  )
 }
 
 export default Loader

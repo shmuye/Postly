@@ -8,7 +8,7 @@ import CommunitiesPage from './pages/CommunitiesPage.tsx'
 import CommunityPage from './pages/CommunityPage.tsx'
 import { useEffect } from 'react'
 import { keepSupabaseAlive } from './utils/keepAlive.ts'
-import { Toaster } from 'react-hot-toast'
+import { Toaster } from '@/components/ui/sonner'
 import AuthPage from './pages/AuthPage.tsx'
 import AuthCallbackPage from './pages/AuthCallbackPage.tsx'
 
@@ -20,20 +20,10 @@ const App = () => {
   }, [])
 
   return (
-    <div className='min-h-screen bg-black text-gray-100 transition-opacity duration-700 pt-20'>
+    <div className="min-h-screen bg-background pt-16">
       <Navbar />
-      <Toaster 
-        position='top-right'
-        reverseOrder={false}
-        toastOptions={{
-          duration: 3000,
-          style: {
-            background: '#333',
-            color: '#fff'
-          }
-        }}
-      />
-      <div className='container mx-auto px-4 py-6'>
+      <Toaster position="top-right" richColors closeButton />
+      <main className="container mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-8">
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/create" element={<CreatePostPage />} /> 
@@ -44,7 +34,7 @@ const App = () => {
             <Route path='/login' element={<AuthPage />} />
             <Route path='/auth/callback' element={<AuthCallbackPage />} />
           </Routes>
-      </div>
+      </main>
     </div>
   )
 }
