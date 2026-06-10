@@ -10,6 +10,7 @@ import { useEffect } from 'react'
 import { keepSupabaseAlive } from './utils/keepAlive.ts'
 import { Toaster } from 'react-hot-toast'
 import AuthPage from './pages/AuthPage.tsx'
+import AuthCallbackPage from './pages/AuthCallbackPage.tsx'
 
 
 const App = () => {
@@ -41,6 +42,7 @@ const App = () => {
             <Route path="/communities" element={<CommunitiesPage />} />
             <Route path="/community/:id" element={<CommunityPage />}/>
             <Route path='/login' element={<AuthPage />} />
+            <Route path='/auth/callback' element={<AuthCallbackPage />} />
           </Routes>
       </div>
     </div>

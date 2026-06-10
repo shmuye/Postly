@@ -12,11 +12,14 @@ interface PostInput {
     content: string ;
     avatar_url: string | null;
     community_id?: number | null;
-    user_id?: string | null;
 }
 
 const createPost = async (post: PostInput, imageFile: File) => {
-    
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    if (authError || !user) {
+        throw new Error("You must be logged in to create a post");
+    }
+
     const filePath = `${post.title}-${Date.now()}-${imageFile?.name}`;
 
     const { error: uploadError } = await supabase.storage
@@ -28,7 +31,14 @@ const createPost = async (post: PostInput, imageFile: File) => {
     }
 
     const { data: publicUrlData } =  supabase.storage.from('post_images').getPublicUrl(filePath);
-    const { data, error } = await supabase.from('posts').insert({...post, image_url: publicUrlData.publicUrl});
+    const { data, error } = await supabase.from('posts').insert({
+        title: post.title,
+        content: post.content,
+        avatar_url: post.avatar_url,
+        community_id: post.community_id,
+        user_id: user.id,
+        image_url: publicUrlData.publicUrl,
+    }).select().single();
 
     if (error) {
         throw new Error(error.message);
@@ -74,9 +84,8 @@ const CreatePost = () => {
         if(!selectedFile || !user) return;
         mutate({post: { 
                title, content , 
-               avatar_url: user?.user_metadata.avatar_url || null,
+               avatar_url: user.user_metadata.avatar_url || null,
                community_id: communityId,
-               user_id: user?.id || null
             },
             imageFile: selectedFile});
     }   
