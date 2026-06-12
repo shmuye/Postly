@@ -2,8 +2,8 @@ import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, PenSquare, Users, PlusCircle } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
+import UserMenu, { UserMenuMobile } from "@/components/UserMenu";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Sheet,
   SheetContent,
@@ -23,18 +23,8 @@ const navLinks = [
 
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
-  const { user, signOut } = useAuth();
+  const { user } = useAuth();
   const location = useLocation();
-
-  const displayName =
-    user?.user_metadata?.user_name || user?.email || "User";
-
-  const initials = displayName
-    .split(" ")
-    .map((n: string) => n[0])
-    .join("")
-    .slice(0, 2)
-    .toUpperCase();
 
   const links = navLinks.filter((link) => !link.auth || user);
 
@@ -68,20 +58,7 @@ const Navbar = () => {
 
         <div className="hidden items-center gap-3 md:flex">
           {user ? (
-            <>
-              <div className="flex items-center gap-2.5">
-                <Avatar size="sm">
-                  <AvatarImage src={user.user_metadata?.avatar_url} alt={displayName} />
-                  <AvatarFallback>{initials}</AvatarFallback>
-                </Avatar>
-                <span className="max-w-[120px] truncate text-sm text-muted-foreground">
-                  {displayName}
-                </span>
-              </div>
-              <Button variant="destructive" size="sm" onClick={signOut}>
-                Sign Out
-              </Button>
-            </>
+            <UserMenu user={user} />
           ) : (
             <Button asChild size="sm">
               <Link to="/login">Sign In</Link>
@@ -113,25 +90,7 @@ const Navbar = () => {
             <Separator className="my-4" />
             <div className="px-4">
               {user ? (
-                <div className="space-y-4">
-                  <div className="flex items-center gap-3">
-                    <Avatar>
-                      <AvatarImage src={user.user_metadata?.avatar_url} alt={displayName} />
-                      <AvatarFallback>{initials}</AvatarFallback>
-                    </Avatar>
-                    <span className="text-sm font-medium">{displayName}</span>
-                  </div>
-                  <Button
-                    variant="destructive"
-                    className="w-full"
-                    onClick={() => {
-                      signOut();
-                      setMenuOpen(false);
-                    }}
-                  >
-                    Sign Out
-                  </Button>
-                </div>
+                <UserMenuMobile user={user} onNavigate={() => setMenuOpen(false)} />
               ) : (
                 <Button asChild className="w-full" onClick={() => setMenuOpen(false)}>
                   <Link to="/login">Sign In</Link>

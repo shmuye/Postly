@@ -11,6 +11,7 @@ import { keepSupabaseAlive } from './utils/keepAlive.ts'
 import { Toaster } from '@/components/ui/sonner'
 import AuthPage from './pages/AuthPage.tsx'
 import AuthCallbackPage from './pages/AuthCallbackPage.tsx'
+import ProfilePage from './pages/ProfilePage.tsx'
 
 
 const App = () => {
@@ -33,6 +34,7 @@ const App = () => {
             <Route path="/community/:id" element={<CommunityPage />}/>
             <Route path='/login' element={<AuthPage />} />
             <Route path='/auth/callback' element={<AuthCallbackPage />} />
+            <Route path='/profile' element={<ProfilePage />} />
           </Routes>
       </main>
     </div>

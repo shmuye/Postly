@@ -9,6 +9,7 @@ interface AuthContextType {
   signUpWithEmail: (email: string, password: string) => Promise<void>;
   signInWithEmail: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
+  deleteAccount: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -82,6 +83,60 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setUser(null);
   };
 
+  const deleteAccount = async () => {
+    const { data: { user: currentUser }, error: authError } = await supabase.auth.getUser();
+    if (authError || !currentUser) {
+      throw new Error("You must be logged in to delete your account");
+    }
+
+    const userId = currentUser.id;
+
+    const { data: userPosts } = await supabase
+      .from("posts")
+      .select("id")
+      .eq("user_id", userId);
+
+    const postIds = userPosts?.map((post) => post.id) ?? [];
+
+    if (postIds.length > 0) {
+      const { error: votesOnPostsError } = await supabase
+        .from("votes")
+        .delete()
+        .in("post_id", postIds);
+      if (votesOnPostsError) throw votesOnPostsError;
+
+      const { error: commentsOnPostsError } = await supabase
+        .from("comment")
+        .delete()
+        .in("post_id", postIds);
+      if (commentsOnPostsError) throw commentsOnPostsError;
+    }
+
+    const { error: votesError } = await supabase
+      .from("votes")
+      .delete()
+      .eq("user_id", userId);
+    if (votesError) throw votesError;
+
+    const { error: commentsError } = await supabase
+      .from("comment")
+      .delete()
+      .eq("user_id", userId);
+    if (commentsError) throw commentsError;
+
+    const { error: postsError } = await supabase
+      .from("posts")
+      .delete()
+      .eq("user_id", userId);
+    if (postsError) throw postsError;
+
+    const { error: deleteUserError } = await supabase.rpc("delete_user");
+    if (deleteUserError) throw deleteUserError;
+
+    await supabase.auth.signOut();
+    setUser(null);
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -91,6 +146,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         signUpWithEmail,
         signInWithEmail,
         signOut,
+        deleteAccount,
       }}
     >
       {children}
