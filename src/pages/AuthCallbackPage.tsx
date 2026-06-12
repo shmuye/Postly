@@ -8,7 +8,14 @@ const AuthCallbackPage = () => {
 
   useEffect(() => {
     const handleCallback = async () => {
-      const code = new URLSearchParams(window.location.search).get("code");
+      const params = new URLSearchParams(window.location.search);
+      const code = params.get("code");
+      const errorParam = params.get("error");
+
+      if (errorParam) {
+        navigate("/login");
+        return;
+      }
 
       if (code) {
         const { error } = await supabase.auth.exchangeCodeForSession(code);
@@ -25,7 +32,8 @@ const AuthCallbackPage = () => {
         return;
       }
 
-      navigate("/");
+      window.history.replaceState(null, "", "/");
+      navigate("/", { replace: true });
     };
 
     handleCallback();
