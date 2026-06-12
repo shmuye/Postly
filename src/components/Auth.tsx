@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { Github } from "lucide-react";
+import { Github, Mail } from "lucide-react";
 
 export default function AuthComponent() {
   const navigate = useNavigate();
@@ -16,21 +17,33 @@ export default function AuthComponent() {
   const [password, setPassword] = useState("");
   const [isLogin, setIsLogin] = useState(true);
   const [loading, setLoading] = useState(false);
+  const [verificationMessage, setVerificationMessage] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setVerificationMessage("");
 
     try {
       if (isLogin) {
         await signInWithEmail(email, password);
+        navigate("/");
       } else {
         await signUpWithEmail(email, password);
+        setPassword("");
+        setIsLogin(true);
+        const message = `We sent a verification link to ${email}. Please verify your email before signing in.`;
+        setVerificationMessage(message);
+        toast.success("Check your email", {
+          description: "Verify your email address before signing in.",
+        });
       }
-
-      navigate("/");
-    } catch {
-      alert("Authentication failed");
+    } catch (error) {
+      const message =
+        error instanceof Error && error.message.toLowerCase().includes("email not confirmed")
+          ? "Please verify your email before signing in."
+          : "Authentication failed";
+      toast.error(message);
     }
 
     setLoading(false);
@@ -51,6 +64,13 @@ export default function AuthComponent() {
         </CardHeader>
 
         <CardContent className="space-y-4">
+          {verificationMessage && (
+            <div className="flex gap-3 rounded-lg border border-primary/20 bg-primary/5 p-4 text-sm">
+              <Mail className="mt-0.5 size-4 shrink-0 text-primary" />
+              <p className="text-muted-foreground">{verificationMessage}</p>
+            </div>
+          )}
+
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
@@ -111,7 +131,10 @@ export default function AuthComponent() {
             <Button
               variant="link"
               className="px-1"
-              onClick={() => setIsLogin(!isLogin)}
+              onClick={() => {
+                setIsLogin(!isLogin);
+                setVerificationMessage("");
+              }}
             >
               {isLogin ? "Sign Up" : "Sign In"}
             </Button>
