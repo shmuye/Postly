@@ -28,7 +28,6 @@ const deletePost = async (id: number): Promise<any[]> => {
 
   const rows = Array.isArray(data) ? data : (data ? [data] : []);
   const deletedCount = rows.length;
-  console.log("deleted post", { rows, error, deletedCount });
 
   if (deletedCount === 0) {
     throw new Error("No post was deleted");

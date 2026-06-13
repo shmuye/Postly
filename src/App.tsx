@@ -7,7 +7,7 @@ import PostPage from './pages/PostPage.tsx'
 import CommunitiesPage from './pages/CommunitiesPage.tsx'
 import CommunityPage from './pages/CommunityPage.tsx'
 import { useEffect } from 'react'
-import { keepSupabaseAlive } from './utils/keepAlive.ts'
+import { startSupabaseKeepAlive } from './utils/keepAlive.ts'
 import { Toaster } from '@/components/ui/sonner'
 import AuthPage from './pages/AuthPage.tsx'
 import AuthCallbackPage from './pages/AuthCallbackPage.tsx'
@@ -17,7 +17,7 @@ import ProfilePage from './pages/ProfilePage.tsx'
 const App = () => {
 
   useEffect(() => {
-    keepSupabaseAlive();
+    return startSupabaseKeepAlive();
   }, [])
 
   return (
